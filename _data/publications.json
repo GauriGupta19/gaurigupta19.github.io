@@ -1,0 +1,137 @@
+[
+	{
+		"id": "platonerf2023",
+		"title": "PlatoNeRF: 3D Reconstruction in Plato's Cave via Single-View Two-Bounce Lidar",
+		"authors": ["<b>Tzofi Klinghoffer</b>", "Xiaoyu Xiang*", "Siddharth Somasundaram*", "Yuchen Fan", "Christian Richardt", "Ramesh Raskar", "Rakesh Ranjan"],
+		"venue": "arXiv",
+		"date": "2023",
+		"links" : [
+            {"type": "link", "name": "Project Page", "target": "https://platonerf.github.io"},
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/abs/2312.14239"},
+            {"type": "link", "name": "Code", "target": "https://github.com/facebookresearch/PlatoNeRF"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "diser2023",
+		"title": "DISeR: Designing Imaging Systems with Reinforcement Learning",
+		"authors": ["<b>Tzofi Klinghoffer</b>*", "Kushagra Tiwary*", "Nikhil Behari", "Bhavya Agrawalla", "Ramesh Raskar"],
+		"venue": "ICCV",
+		"date": "2023",
+		"links" : [
+            {"type": "link", "name": "Project Page", "target": "https://tzofi.github.io/diser"},
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/abs/2309.13851"},
+            {"type": "link", "name": "Code", "target": "https://github.com/tzofi/diser"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "viewpoints2023",
+		"title": "Towards Viewpoint Robustness in Bird's Eye View Segmentation",
+		"authors": ["<b>Tzofi Klinghoffer</b>", "Jonah Philion", "Wenzheng Chen", "Or Litany", "Zan Gojcic", "Jungseock Joo ", "Ramesh Raskar", "Sanja Fidler", "Jose Alvarez"],
+		"venue": "ICCV",
+		"date": "2023",
+		"links" : [
+            {"type": "link", "name": "Project Page", "target": "https://nvlabs.github.io/viewpoint-robustness"},
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/abs/2309.05192"},
+            {"type": "link", "name": "Code", "target": "https://github.com/NVlabs/viewpoint-robustness"},
+            {"type": "link", "name": "NVIDIA Blog", "target": "https://developer.nvidia.com/blog/using-synthetic-data-to-address-novel-viewpoints-for-autonomous-vehicle-perception/"},
+            {"type": "link", "name": "DRIVE Labs Episode", "target": "https://www.youtube.com/watch?v=SVt1UTtxbSY"}
+		]
+	},
+	{
+		"id": "glossyobjects2022",
+		"title": "ORCa: Glossy Objects as Radiance-Field Cameras",
+		"authors": ["Kushagra Tiwary*", "Akshat Dave*", "Nikhil Behari", "<b>Tzofi Klinghoffer</b>", "Ashok Veeraraghavan", "Ramesh Raskar"],
+		"venue": "CVPR",
+		"date": "2023",
+		"links" : [
+            {"type": "link", "name": "Project Page", "target": "https://ktiwary2.github.io/objectsascam/"},
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/abs/2212.04531"},
+            {"type": "link", "name": "Code", "target": "https://github.com/ktiwary2/orca"},
+            {"type": "link", "name": "MIT News", "target": "https://news.mit.edu/2023/using-reflections-shiny-objects-camera-0510"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "e2ereview2022",
+		"title": "Physics vs. Learned Priors: Rethinking Camera and Algorithm Design for Task-Specific Imaging",
+		"authors": ["<b>Tzofi Klinghoffer</b>*", "Siddharth Somasundaram*", "Kushagra Tiwary*", "Ramesh Raskar"],
+		"venue": "International Conference on Computational Photography (ICCP)",
+		"date": "2022",
+		"links" : [
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/pdf/2204.09871.pdf"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "shadows2022",
+		"title": "Towards Learning Neural Representations from Shadows",
+		"authors": ["Kushagra Tiwary*", "<b>Tzofi Klinghoffer</b>*", "Ramesh Raskar"],
+		"venue": "European Conference on Computer Vision (ECCV)",
+		"date": "2022",
+		"links" : [
+            {"type": "link", "name": "Project Page", "target": "https://tzofi.github.io/NeuralShadowFields/"},
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/pdf/2203.15946.pdf"},
+			{"type": "link", "name": "Code", "target": "https://github.com/ktiwary2/neural_shadow_fields"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "pdrs2022",
+		"title": "Physically Disentangled Representations",
+		"authors": ["<b>Tzofi Klinghoffer</b>*", "Kushagra Tiwary*", "Arkadiusz Balata", "Vivek Sharma", "Ramesh Raskar"],
+		"venue": "arXiv",
+		"date": "2022",
+		"links" : [
+			{"type": "link", "name": "Paper", "target": "https://arxiv.org/pdf/2204.05281.pdf"},
+			{"type": "link", "name": "Code", "target": "https://github.com/tzofi/physically-disentangled-representations"}
+		],
+        "notes": "* Equal Contribution"
+	},
+	{
+		"id": "3dunets2020",
+		"title": "Annotation-Efficient 3D U-Nets for Brain Plasticity Network Mapping",
+		"authors": ["Lars Gjesteby", "<b>Tzofi Klinghoffer</b>", "Meagan Ash", "Matthew Melton", "Kevin Otto", "Damon Lamb", "Sara Burke", "Laura Brattain"],
+		"venue": "IEEE Symposium on Biomedical Imaging (ISBI)",
+		"date": "2021",
+		"links" : [
+			{"type": "link", "name": "Paper", "target": "https://ieeexplore.ieee.org/document/9434142"}
+		]
+	},
+	{
+		"id": "sslforaxons2020",
+		"title": "Self-Supervised Feature Extraction for 3D Axon Segmentation",
+		"authors": ["<b>Tzofi Klinghoffer</b>", "Peter Morales", "Young-Gyun Park", "Nicholas Evans", "Kwanghun Chung", "Laura Brattain"],
+		"venue": "CVPR, Workshop on Computer Vision for Microscopy Image Analysis (CVMI)",
+		"date": "2020",
+		"links" : [
+			{"type": "link", "name": "Paper", "target": "http://openaccess.thecvf.com/content_CVPRW_2020/papers/w57/Klinghoffer_Self-Supervised_Feature_Extraction_for_3D_Axon_Segmentation_CVPRW_2020_paper.pdf"},
+			{"type": "link", "name": "Code", "target": "https://github.com/tzofi/ssl-for-axons"}
+		]
+	},
+	{
+		"id": "dehazing2019",
+		"title": "Feature Forwarding for Efficient Single Image Dehazing",
+		"authors": ["Peter Morales*", "<b>Tzofi Klinghoffer</b>*", "Seung Jae Lee"],
+		"venue": "CVPR, Workshop on New Trends in Image Restoration and Enhancement (NTIRE)",
+		"date": "2019",
+		"links" : [
+			{"type": "link", "name": "Paper", "target": "http://openaccess.thecvf.com/content_CVPRW_2019/html/NTIRE/Morales_Feature_Forwarding_for_Efficient_Single_Image_Dehazing_CVPRW_2019_paper.html"},
+			{"type": "link", "name": "Code", "target": "https://github.com/pmm09c/ntire-dehazing"}
+		],
+                "notes": "* Equal Contribution"
+	},
+	{
+		"id": "ams2018",
+		"title": "Applying Image Recognition to Enhance Fisheries Management Capabilities",
+		"authors": ["<b>Tzofi Klinghoffer</b>", "Caleb Perez", "Robert Vincent", "Paris Perdikaris", "Chryssostomos Chryssostomidis"],
+		"venue": "AMS, AI and its Applications to Environmental Sciences",
+		"date": "2018",
+                "award": "Student Research Award",
+		"links" : [
+			{"type": "link", "name": "Abstract", "target": "https://ams.confex.com/ams/98Annual/webprogram/Paper333211.html"},
+			{"type": "link", "name": "Slides", "target": "https://ams.confex.com/ams/98Annual/webprogram/Handout/Paper333211/AMS%20Presentation.pdf"}
+		]
+	}
+]

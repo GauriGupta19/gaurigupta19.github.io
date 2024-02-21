@@ -1,0 +1,128 @@
+---
+layout: default
+---
+
+<div class='mainitem' id='about'>
+	<div class='hidden-md hidden-lg mainheader'>About</div>
+	<p>
+	I am a PhD student studying computer vision and machine learning at <a target='_blank' href='https://www.media.mit.edu/'>MIT Media Lab</a>, where I am advised by <a target='_blank' href='https://www.media.mit.edu/people/raskar/overview/'>Prof Ramesh Raskar</a>.
+    </p>
+    <p>
+    My interests lie broadly in the intersection of computer vision, computational imaging, and graphics. Topics of interest include 3D vision, neural rendering (e.g. neural fields), and data-driven imaging. Previously, I was a software engineer in the Alexa AI group at <a target='_blank' href='https://www.amazon.science/'>Amazon</a>, and, before that, an AI researcher at <a target='_blank' href='https://www.ll.mit.edu/'>MIT Lincoln Laboratory</a>, where I studied computer vision and unsupervised representation learning. Since starting my PhD, I have spent summers with <a target='_blank' href='https://www.nvidia.com/en-us/research/'>NVIDIA</a> and <a target='_blank' href='https://about.meta.com/realitylabs/'>Meta Reality Labs</a>.
+	</p>
+	<p>
+	I am also a <a target='_blank' href='https://www.draper.com/careers/scholar-program'>Draper Scholar</a> and <a target='_blank' href='https://www.qualcomm.com/research/university-relations/innovation-fellowship/2023-north-america'>2023 Qualcomm Innovation Fellow</a>.
+	</p>
+	<p>
+	I received my Master of Science from MIT and my Bachelor of Science in Computer Science from <a target='_blank' href='https://www.ua.edu/'>The University of Alabama</a>, where I worked with <a target='_blank' href='http://atkison.cs.ua.edu/'>Prof Travis Atkison</a>. Before starting my PhD, I was also fortunate to work with <a target='_blank' href='http://people.csail.mit.edu/polina/'>Prof Polina Golland</a> at <a target='_blank' href='https://www.csail.mit.edu/'>MIT CSAIL</a> on automated understanding of chest x-ray images and <a target='_blank' href='https://jeffhuang.com/'>Prof Jeff Huang</a> <a target='_blank' href='https://www.brown.edu/'>Brown University</a> on <a target='_blank' href='https://webgazer.cs.brown.edu/'>WebGazer</a>.
+	</p>
+</div>
+
+
+<div class='mainitem' id='news'>
+	<div class='mainheader'>News</div>
+
+	{% assign sortednews = site.news | sort: 'date','last' | reverse %}
+
+	{% for newsitem in sortednews limit: 5 %}
+
+		<div class='row newsitem'>
+			<div class='col-md-3 col-lg-2 newsdate'>{{ newsitem.date | date: "%B %Y" }}</div>
+			<div class='col-md-9 col-lg-10 newscontent'>{{ newsitem.content }}</div>
+		</div>
+
+	{% endfor %}
+
+	<a href='newsarchive.html'>Archive</a>
+
+</div>
+
+
+<div class='mainitem' id='publications'> 
+
+	<div class='mainheader'>Publications</div>
+
+	<!--
+    {% assign sorted_pubs = site.data.publications | sort: 'date' | reverse %}
+    -->
+
+	{% for pub in site.data.publications %}
+
+		<div class='row pub'>
+
+			{% capture mainlink %}
+				{% assign firstlink = pub.links[0] %}
+				{% if firstlink.target %}
+					{{ firstlink.target }}
+				{% elsif firstlink.type == 'pdf' %}
+					pdf/{{ pub.id }}.pdf
+				{% else %}
+					/
+				{% endif %}
+			{% endcapture %}
+
+			<div class='col-lg-3 col-md-4 col-xs-4 pubimagesection'>
+				<a target='_blank' href='{{ mainlink }}'><img class='pubimage img img-responsive' src='img/pubthumbs/{{ pub.id }}.png' width='200'/></a>
+			</div>
+
+			<div class='col-lg-9 col-md-8 col-xs-8 pubtextsection'>
+
+				<div class='pubtitle'>
+					<a target='_blank' href='{{ mainlink }}'>{{ pub.title }}</a>
+				</div>
+
+				<div class='pubauthors'>
+					{% for author in pub.authors %}
+                                        <!-- {% if forloop.last %}{% unless forloop.first %} and {% endunless %}{% endif %} -->
+						{% if site.data.people[author] %}
+							<a class='pubauthor' target='_blank' href='{{ site.data.people[author] }}'>
+								{{ author }}{% if forloop.last == false %}{% unless forloop.length == 2 %}, {% endunless %}{% endif %}
+							</a>
+						{% else %}
+							{{ author }}{% if forloop.last == false %}{% unless forloop.length == 2 %}, {% endunless %}{% endif %}
+						{% endif %}
+					{% endfor %}
+				</div>
+
+				<div class='pubnotes'>{{ pub.notes }}</div>
+
+                            {% if pub.date=="" %}
+                                <div class='pubvenue', style="font-family:Arial Narrow">{{ pub.venue }}</div>
+                            {% else %}
+                                <div class='pubvenue', style="font-family:Arial Narrow">{{ pub.venue }}, {{pub.date}}</div>
+                            {% endif %}
+
+				{% for link in pub.links %}
+					{% if forloop.first == false %} {% endif %}
+
+					{% capture lname %}
+						{% if link.type == 'link' %}
+							{{ link.name }}
+						{% else %}
+							{{ link.type }}
+						{% endif %}
+					{% endcapture %}
+
+					{% capture ltarget %}
+						{% if link.type == 'link' %}
+							{{ link.target }}
+						{% else %}
+							{{ link.type }}/{% if link.target %}{{ link.target }}{% else %}{{ pub.id }}.{{ site.data.extensions[link.type] }}{% endif %}
+						{% endif %}
+					{% endcapture %}
+
+					<a class='publink' target='_blank' href='{{ ltarget }}'>[{{ lname }}]</a>
+				{% endfor %}
+
+				{% if pub.award %}
+					<div><span class='label pubaward'>{{ pub.award }}</span></div>
+				{% endif %}
+
+			</div>
+
+		</div>
+	{% endfor %}
+
+	</div>
+
+</div>
