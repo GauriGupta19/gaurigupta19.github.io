@@ -8,7 +8,7 @@
 		"links" : [
             {"type": "link", "name": "Project Page", "target": "https://mitmedialab.github.io/codream.github.io/"},
 			{"type": "link", "name": "Paper", "target": "https://arxiv.org/abs/2402.15968"},
-            {"type": "link", "name": "Code", "target": "https://github.com/tremblerz/collab_learning"}
+            {"type": "link", "name": "Code", "target": "https://github.com/GauriGupta19/codream"}
 		],
         "notes": "* Equal Contribution"
 	},
