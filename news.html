@@ -5,51 +5,12 @@ layout: default
 <div class='mainitem' id='news'>
 	<div class='mainheader'>News</div>
 
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>August 2025</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Left <a href='https://parallel.ai' target='_blank'>Parallel</a> and building something new (More to come soon!).</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>July 2025</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Built and released our SOTA web deep-research agents. See here <a href='https://parallel.ai/blog/deep-research' target='_blank'>here</a> and<a href='https://parallel.ai/blog/deep-research-benchmarks' target='_blank'>here</a>.</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>February 2025</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Our research <a href='https://arxiv.org/abs/2402.15968' target='_blank'>CoDream</a> accepted to AAAI 2025.</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>May 2025</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Invited highlight <a href='https://www.youtube.com/watch?v=rDC0HrhBv8A' target='_blank'>talk</a> at Imagination in Action, MIT Boston on AI agents.</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>May 2024</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Our <a href='https://arxiv.org/abs/2401.04795' target='_blank'>research</a> on simulating societies for pandemic acceted to AAMAS 2024 with Oral and <a href='https://www.aamas2024-conference.auckland.ac.nz/awards/best-paper-awards/' target='_blank'>Best Paper Award</a>!</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>August 2023</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Awarded with JP Morgan Research Grant award for PhD research.</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>September 2023</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Finished my internship at Apple MLR, working with the wonderful researchers <a href='https://scholar.google.com/citations?user=kjMNMLkAAAAJ&hl=en'>Navdeep Jaitly</a> and <a href='https://scholar.google.com/citations?user=Sv2TGqsAAAAJ&hl=en'>Josh Susskind</a>.</div> and <a href='https://scholar.google.com/citations?user=Sv2TGqsAAAAJ&hl=en'>Josh Susskind</a> and <a href='https://bengio.abracadoudou.com/'>Samy Bengio</a>.</div>
-	</div>
-
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>August 2019</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Awarded with Charpak Lab Research Fellowship, among top 20 students selected across globe for research in France.</div>
-	</div>
-
-	<div class='row newsitem'>
-		<div class='col-md-3 col-lg-2 newsdate'>June 2022</div>
-		<div class='col-md-9 col-lg-10 newscontent'>Our <a href='https://arxiv.org/abs/2204.09871'>paper</a> on advances in data-driven imaging accepted to ICCP 2022. Our talk can be found <a href='https://www.youtube.com/live/FDQFiAUrPHo?feature=share&t=4751'>here</a>.</div>
-	</div>
+	{% for newsitem in site.data.news %}
+		<div class='row newsitem'>
+			<div class='col-md-3 col-lg-2 newsdate'>{{ newsitem.date }}</div>
+			<div class='col-md-9 col-lg-10 newscontent'>{{ newsitem.content }}</div>
+		</div>
+	{% endfor %}
 
 	<a href='newsarchive.html'>Archive</a>
 
