@@ -1,0 +1,17 @@
+{
+  "name": "gauri-portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio website",
+  "scripts": {
+    "dev": "bundle exec jekyll serve --livereload",
+    "build": "bundle exec jekyll build",
+    "install-deps": "bundle install",
+    "serve": "bundle exec jekyll serve"
+  },
+  "devDependencies": {
+    "sass": "^1.69.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^10.1.0"
+  }
+}
