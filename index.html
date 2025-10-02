@@ -22,18 +22,32 @@ layout: default
 <div class='mainitem' id='news'>
 	<div class='mainheader'>News</div>
 
-	{% assign sortednews = site.news | sort: 'date','last' | reverse %}
+	<div class='row newsitem'>
+		<div class='col-md-3 col-lg-2 newsdate'>February 2024</div>
+		<div class='col-md-9 col-lg-10 newscontent'><a href='https://platonerf.github.io/'>PlatoNeRF</a> accepted to CVPR 2024.</div>
+	</div>
 
-	{% for newsitem in sortednews limit: 5 %}
+	<div class='row newsitem'>
+		<div class='col-md-3 col-lg-2 newsdate'>August 2023</div>
+		<div class='col-md-9 col-lg-10 newscontent'>Gave an invited talk at the Hyundai Vision Conference in South Korea.</div>
+	</div>
 
-		<div class='row newsitem'>
-			<div class='col-md-3 col-lg-2 newsdate'>{{ newsitem.date | date: "%B %Y" }}</div>
-			<div class='col-md-9 col-lg-10 newscontent'>{{ newsitem.content }}</div>
-		</div>
+	<div class='row newsitem'>
+		<div class='col-md-3 col-lg-2 newsdate'>July 2023</div>
+		<div class='col-md-9 col-lg-10 newscontent'>Two papers accepted to ICCV 2023.</div>
+	</div>
 
-	{% endfor %}
+	<div class='row newsitem'>
+		<div class='col-md-3 col-lg-2 newsdate'>May 2023</div>
+		<div class='col-md-9 col-lg-10 newscontent'>Our recent work, <a href='https://arxiv.org/abs/2212.04531'>ORCa</a>, has been featured on the front page of <a href='https://news.mit.edu/2023/using-reflections-shiny-objects-camera-0510'>MIT News</a>.</div>
+	</div>
 
-	<a href='newsarchive.html'>Archive</a>
+	<div class='row newsitem'>
+		<div class='col-md-3 col-lg-2 newsdate'>April 2023</div>
+		<div class='col-md-9 col-lg-10 newscontent'>Excited to have been selected as a <a href='https://www.draper.com/careers/scholar-program'>Draper Scholar</a>!</div>
+	</div>
+
+	<a href='news.html'>More News</a>
 
 </div>
 
