@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Large Language Model Optimization: Memory, Compute, and Inference Techniques"
-date: 2024-01-15
+date: 2025-09-15
 author: "Gauri Gupta"
-categories: ["Research", "Machine Learning", "Optimization"]
+categories: ["Large scale distributed ML", "Optimization techniques", "Job Prep"]
 excerpt: "A comprehensive guide to optimizing large language models across memory, compute, and inference dimensions. Covering techniques from Flash Attention to advanced parallelism strategies."
 ---
 
