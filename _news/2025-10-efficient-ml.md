@@ -13,7 +13,7 @@ Training and deploying large language models efficiently is one of the most crit
 
 ---
 
-## 🧠 Memory Optimization Techniques
+## Memory Optimization Techniques
 
 ### Flash Attention
 
@@ -38,7 +38,7 @@ Input activations easily saturate device memory when training LLMs with large se
 
 ---
 
-## ⚡ Compute Optimization Techniques
+## Compute Optimization Techniques
 
 ### Sequence Packing
 
@@ -60,7 +60,7 @@ A training technique where multiple training sequences are concatenated into one
 
 ---
 
-## 🚀 Inference Optimization Techniques
+## Inference Optimization Techniques
 
 ### KV Caching
 
@@ -110,7 +110,7 @@ Uses a smaller draft LLM to generate responses, then uses the target LLM to veri
 
 ---
 
-## 🏋️ Training Optimization
+## Training Optimization
 
 ### Mixed Precision Training
 
@@ -160,25 +160,25 @@ Instead of processing every token with the same dense network, introduces expert
 
 ---
 
-## 📚 Key Resources
+## Key Resources
 
 ### Academic Courses
 - 🎓 [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
 - 🎓 [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
 
 ### Technical Resources
-- 📚 [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
-- 📄 [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
-- 📄 [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
+- [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
+- [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
+- [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
 ### Video Lectures
-- 📺 [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
-- 📺 [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
-- 📺 [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
+- [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
+- [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
+- [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
 
 ---
 
-## 🎯 Conclusion
+## Conclusion
 
 Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
