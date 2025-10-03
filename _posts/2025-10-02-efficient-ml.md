@@ -13,9 +13,9 @@ Training and deploying large language models efficiently is one of the most crit
 
 ---
 
-## Memory Optimization Techniques
+## 1. Memory Optimization Techniques
 
-### Flash Attention
+### 1.1 Flash Attention
 
 The attention mechanism has quadratic time and memory complexity in sequence length, presenting significant runtime and memory challenges for longer sequences.
 
@@ -27,24 +27,24 @@ The attention mechanism has quadratic time and memory complexity in sequence len
 - 📺 [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 - 📚 [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
 
-### Multi-Query and Grouped Query Attention
+### 1.2 Multi-Query and Grouped Query Attention
 
 - **MQA (Multi-Query Attention)**: Reduces memory by sharing keys and values across attention heads
 - **GQA (Grouped Query Attention)**: Balances efficiency and quality by grouping queries
 
-### Activation Recomputation
+### 1.3 Activation Recomputation
 
 Input activations easily saturate device memory when training LLMs with large sequence lengths or micro-batch sizes. Checkpointing a few activations and recomputing the rest reduces device memory requirements.
 
 ---
 
-## Compute Optimization Techniques
+## 2. Compute Optimization Techniques
 
-### Sequence Packing
+### 2.1 Sequence Packing
 
 A training technique where multiple training sequences are concatenated into one long sequence. This eliminates padding and allows more tokens to be processed per micro-batch, maximizing both GPU compute and memory utilization.
 
-### Efficient Transformers
+### 2.2 Efficient Transformers
 
 **BigBird**: Uses a combination of local, random, and global attention patterns to reduce complexity to O(n).
 
@@ -60,9 +60,9 @@ A training technique where multiple training sequences are concatenated into one
 
 ---
 
-## Inference Optimization Techniques
+## 3. Inference Optimization Techniques
 
-### KV Caching
+### 3.1 KV Caching
 
 KV caching stores computed key-value pairs to avoid recomputation during generation. This is essential for efficient autoregressive generation.
 
@@ -76,7 +76,7 @@ KV caching stores computed key-value pairs to avoid recomputation during generat
 - 📺 [KV Caching Video](https://www.youtube.com/watch?v=UiX8K-xBUpE&t=4822s)
 - 📊 [FLOPS computation with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
-### Stateful Caching
+### 3.2 Stateful Caching
 
 In chat settings, each user query is appended to long dialogue history. When the model runs on input [prefix + user_message], it computes attention KV for that sequence and stores it in cache, keyed by rolling hash of prefix tokens.
 
@@ -84,11 +84,11 @@ In chat settings, each user query is appended to long dialogue history. When the
 
 KV cache is organized in a tree structure with LRU (least recently used) eviction, so you can drop old contexts if memory is full.
 
-### Speculative Decoding
+### 3.3 Speculative Decoding
 
 Uses a smaller draft LLM to generate responses, then uses the target LLM to verify the response, significantly speeding up inference.
 
-### Model Compression Techniques
+### 3.4 Model Compression Techniques
 
 **Distillation**: Builds smaller, cheaper "student models" by transferring skills from pre-trained "teacher models".
 
@@ -110,15 +110,15 @@ Uses a smaller draft LLM to generate responses, then uses the target LLM to veri
 
 ---
 
-## Training Optimization
+## 4. Training Optimization
 
-### Mixed Precision Training
+### 4.1 Mixed Precision Training
 
 Uses bfloat16 and other reduced precision formats to reduce memory usage while maintaining training stability.
 
-### Parallelism Approaches
+### 4.2 Parallelism Approaches
 
-#### Data Parallelism
+#### 4.2.1 Data Parallelism
 
 - **DataParallel**: Single-process, multi-threaded approach for single-GPU models
 - **Distributed Data Parallel (DDP)**: Each GPU has its own process, works across multiple nodes
@@ -133,23 +133,23 @@ Uses bfloat16 and other reduced precision formats to reduce memory usage while m
 - 📺 [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - 📺 [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
-#### Pipeline Parallelism
+#### 4.2.2 Pipeline Parallelism
 
 - **GPipe**: Splits minibatches into microbatches, enabling simultaneous processing
 - **PipeDream**: Alternates forward and backward passes across workers
 - **Zero Bubble Pipeline**: Eliminates pipeline bubbles through advanced scheduling
 
-#### Tensor Parallelism
+#### 4.2.3 Tensor Parallelism
 
 - **Column-wise Parallel**: Splits matrices by columns
 - **Row-wise Parallel**: Splits matrices by rows
 - **Megatron-LM**: Open source implementation of tensor parallelism
 
-#### Context Parallelism
+#### 4.2.4 Context Parallelism
 
 Parallelizes sequence length across multiple GPUs. Each GPU handles a segment of the sequence, storing necessary KV pairs, then reassembles them during backward pass.
 
-#### Expert Parallelism
+#### 4.2.5 Expert Parallelism
 
 Instead of processing every token with the same dense network, introduces expert sub-networks. Tokens are routed to specific experts sharded across devices.
 
@@ -160,18 +160,18 @@ Instead of processing every token with the same dense network, introduces expert
 
 ---
 
-## Key Resources
+## 5. Key Resources
 
-### Academic Courses
+### 5.1 Academic Courses
 - 🎓 [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
 - 🎓 [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
 
-### Technical Resources
+### 5.2 Technical Resources
 - [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
 - [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
 - [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
-### Video Lectures
+### 5.3 Video Lectures
 - [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 - [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	{% include head.html %}
+
+	<body>
+
+            <div id="mainnav" class="navbar navbar-inverse navbar-static-top" role="navigation">
+	        <div class="container">
+				<div class="navbar-brand">
+					<a href="/">Gauri Gupta</a>
+				</div>
+				<div class="navbar-nav">
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="/">Home</a></li>
+						<li><a href="/blogs.html">Blog</a></li>
+						<li><a href="/news.html">News</a></li>
+						<!-- <li><a href="/#publications">Publications</a></li> -->
+					</ul>
+				</div>
+	        </div>     
+            </div>
+
+	    <div class='container' id='content'>
+
+	    	<div class='row'>
+
+	    		<div class='col-md-12 maincontent'>
+                            {{ content }}
+			</div>
+
+		</div>
+
+            </div>
+
+		{% include scripts.html %}
+	</body>
+</html>
