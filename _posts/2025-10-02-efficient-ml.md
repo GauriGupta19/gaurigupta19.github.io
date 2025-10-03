@@ -13,9 +13,9 @@ Training and deploying large language models efficiently is one of the most crit
 
 ---
 
-## 1. Memory Optimization Techniques
+### 1. Memory Optimization Techniques
 
-### 1.1 Flash Attention
+#### 1.1 Flash Attention
 
 The attention mechanism has quadratic time and memory complexity in sequence length, presenting significant runtime and memory challenges for longer sequences.
 
@@ -24,8 +24,8 @@ The attention mechanism has quadratic time and memory complexity in sequence len
 **Recomputation Technique**: Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
 
 **Key Resources**:
-- [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 - [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
+- [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 
 ### 1.2 Multi-Query and Grouped Query Attention
 
@@ -74,7 +74,7 @@ KV caching stores computed key-value pairs to avoid recomputation during generat
 
 **Resources**:
 - [KV Caching Video](https://www.youtube.com/watch?v=UiX8K-xBUpE&t=4822s)
-- [FLOPS computation with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
+- [FLOPS computation efficiency with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
 ### 3.2 Stateful Caching
 
