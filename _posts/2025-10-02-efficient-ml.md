@@ -24,8 +24,8 @@ The attention mechanism has quadratic time and memory complexity in sequence len
 **Recomputation Technique**: Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
 
 **Key Resources**:
-- 📺 [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
-- 📚 [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
+- [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
+- [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
 
 ### 1.2 Multi-Query and Grouped Query Attention
 
@@ -55,8 +55,8 @@ A training technique where multiple training sequences are concatenated into one
 **LongNet**: At lower layers, tokens attend to nearby tokens (small dilation). At higher layers, dilation factor grows, allowing tokens to reach further. Scales linearly with sequence length O(Nd).
 
 **Resources**:
-- 📺 [LongNet Video](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
-- 📄 [LongNet Paper](https://arxiv.org/pdf/2307.02486)
+- [LongNet Video](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
+- [LongNet Paper](https://arxiv.org/pdf/2307.02486)
 
 ---
 
@@ -73,8 +73,8 @@ KV caching stores computed key-value pairs to avoid recomputation during generat
 - **Interleaving Local and Global Attention**: Uses global attention in every 4-6 layers
 
 **Resources**:
-- 📺 [KV Caching Video](https://www.youtube.com/watch?v=UiX8K-xBUpE&t=4822s)
-- 📊 [FLOPS computation with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
+- [KV Caching Video](https://www.youtube.com/watch?v=UiX8K-xBUpE&t=4822s)
+- [FLOPS computation with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
 ### 3.2 Stateful Caching
 
@@ -104,9 +104,9 @@ Uses a smaller draft LLM to generate responses, then uses the target LLM to veri
 **Quantization-Aware Training (QAT)**: Applies quantization during pre-training or fine-tuning, simulating quantization error as a regularizer.
 
 **Resources**:
-- 📺 [Quantization Video](https://www.youtube.com/watch?v=0VdNflU08yA)
-- 📄 [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
-- 📄 [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
+- [Quantization Video](https://www.youtube.com/watch?v=0VdNflU08yA)
+- [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
+- [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
 ---
 
@@ -130,8 +130,8 @@ Uses bfloat16 and other reduced precision formats to reduce memory usage while m
 3. **Parameter Partitioning**: Linear memory reduction with DP degree
 
 **Resources**:
-- 📺 [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
-- 📺 [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
+- [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
+- [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
 #### 4.2.2 Pipeline Parallelism
 
@@ -163,8 +163,8 @@ Instead of processing every token with the same dense network, introduces expert
 ## 5. Key Resources
 
 ### 5.1 Academic Courses
-- 🎓 [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
-- 🎓 [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
+- [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
+- [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
 
 ### 5.2 Technical Resources
 - [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
