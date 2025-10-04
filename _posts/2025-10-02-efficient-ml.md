@@ -7,30 +7,31 @@ categories: ["Interview Prep", "Machine Learning", "Optimization"]
 excerpt: "Job preparation notes covering essential LLM optimization techniques for AI lab interviews. Quick reference for memory, compute, and inference optimization strategies."
 ---
 
-# LLM Optimization Interview Notes
+# Large Language Model Optimization Inteview Notes: Memory, Compute, and Inference Techniques
 *Essential techniques for LLM large scale optimizations - not comprehensive explanations but key concepts to know*
 
 Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I'll share a comprehensive overview of optimization techniques across memory, compute, and inference dimensions.
 
 ---
+## 1. Memory Optimization Techniques
 
 ## **1. MEMORY OPTIMIZATION**
 *Memory is the biggest bottleneck in LLM training/inference. These techniques reduce memory footprint while maintaining model quality.*
 
-### **Flash Attention**
+### 1.1 Flash Attention
 
 The attention mechanism has quadratic time and memory complexity in sequence length, presenting significant runtime and memory challenges for longer sequences.
 Flash Attention reduces attention memory complexity from O(N²) to O(N) through tiling and recomputation techniques. Instead of processing entire attention matrices at once, it processes attention in blocks and stores normalization factors instead of full attention matrices. The tiling technique decomposes inputs based on shared memory size, while recomputation stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length).
 
-Decomposes inputs based on shared memory size and calculates softmax one tile at a time. Instead of working on entire query, key, value tensors at once, it makes several passes and combines results in subsequent steps.
+**Tiling Technique**: Decomposes inputs based on shared memory size and calculates softmax one tile at a time. Instead of working on entire query, key, value tensors at once, it makes several passes and combines results in subsequent steps.
 
-Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
+**Recomputation Technique**: Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
 
 **Key Resources**:
 - [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
 - [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 
-### **Multi-Query & Grouped Query Attention**
+### 1.2 Multi-Query and Grouped Query Attention
 
 - **MQA (Multi-Query Attention)**: Reduces memory by sharing keys and values across attention heads
 - **GQA (Grouped Query Attention)**: Balances efficiency and quality by grouping queries
@@ -41,15 +42,16 @@ Input activations easily saturate device memory when training LLMs with large se
 
 ---
 
-## **2. COMPUTE OPTIMIZATION**
-*Maximize GPU utilization and reduce computational overhead through smarter data handling and model architectures.*
+## 2. Compute Optimization Techniques
 
-### **Sequence Packing**
+Maximize GPU utilization and reduce computational overhead through smarter data handling and model architectures.
 
-Sequence packing concatenates multiple training sequences into one long sequence, eliminating padding and allowing more tokens to be processed per micro-batch. This maximizes both GPU compute and memory utilization, but requires careful attention masking to prevent tokens from different sequences from attending to each other.
+### 2.1 Sequence Packing
+
+A training technique where multiple training sequences are concatenated into one long sequence. This eliminates padding and allows more tokens to be processed per micro-batch, maximizing both GPU compute and memory utilization.
 
 ### 2.2 Efficient Transformers
-Several transformer variants reduce computational complexity
+
 **BigBird**: Uses a combination of local, random, and global attention patterns to reduce complexity to O(n).
 
 **Longformer**: Utilizes sliding window (local) attention combined with global attention for improved efficiency.
@@ -64,10 +66,11 @@ Several transformer variants reduce computational complexity
 
 ---
 
-## **3. INFERENCE OPTIMIZATION**
-*Primer: Inference is where most production costs occur. These techniques dramatically speed up generation while maintaining quality.*
+## 3. Inference Optimization Techniques
 
-### **KV Caching**
+Inference is where most production costs occur. These techniques dramatically speed up generation while maintaining quality.
+
+### 3.1 KV Caching
 
 KV caching stores computed key-value pairs to avoid recomputation during generation. This is essential for efficient autoregressive generation.
 
@@ -81,7 +84,7 @@ KV caching stores computed key-value pairs to avoid recomputation during generat
 - [KV Caching Video](https://www.youtube.com/watch?v=UiX8K-xBUpE&t=4822s)
 - [FLOPS computation efficiency with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
-### **Stateful Caching**
+### 3.2 Stateful Caching
 
 Stateful caching stores conversation history using rolling hashes, allowing reuse of overlapping prefixes. For example, if "Hello, how are you?" is cached, it can be reused when the new prefix is "Hello, how are you doing today?" The cache is organized in a tree structure with LRU eviction to manage memory efficiently.
 
@@ -115,15 +118,17 @@ Speculative decoding uses a smaller draft model to generate responses, then uses
 - [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
 ---
+## 4. Training Optimization
+## 4. Training Optimization
 
 ## **4. TRAINING OPTIMIZATION**
 *Primer: Training large models requires sophisticated parallelism strategies. Know the different approaches and their trade-offs.*
 
-### **Mixed Precision Training**
+### 4.1 Mixed Precision Training
 
 Mixed precision training uses bfloat16 and fp16 formats with loss scaling to reduce memory usage while maintaining training stability. This provides 2x memory reduction and faster training, but requires careful handling of numerical stability issues.
 
-### **Parallelism Strategies**
+### 4.2 Parallelism Approaches
 
 **Data Parallelism** 
 
@@ -140,7 +145,7 @@ Mixed precision training uses bfloat16 and fp16 formats with loss scaling to red
 - [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
-**Pipeline Parallelism** splits the model across multiple GPUs.
+#### 4.2.2 Pipeline Parallelism
 
 - **GPipe**: Splits minibatches into microbatches, enabling simultaneous processing
 - **PipeDream**: Alternates forward and backward passes across workers
@@ -157,41 +162,26 @@ Mixed precision training uses bfloat16 and fp16 formats with loss scaling to red
 
 ---
 
-## **5. KEY OHER RESOURCES**
+## 5. Key Resources
 
-### **Academic Courses**
-- [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/) - Scaling ML
-- [Stanford CS224n](https://web.stanford.edu/class/cs224n/) - NLP
+### 5.1 Academic Courses
+- [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
+- [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
 
-### **Technical References**
+### 5.2 Technical Resources
 - [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
 - [Character.ai Optimization Guide](https://research.character.ai/optimizing-inference/)
 - [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
-### **Video Lectures**
+### 5.3 Video Lectures
 - [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 - [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
 
 ---
 
-## **INTERVIEW TALKING POINTS**
+## Conclusion
 
-### **Memory Questions**
-- "How would you reduce memory for a 70B parameter model?"
-- "What's the trade-off between activation recomputation and compute time?"
-- "When would you use Flash Attention vs other attention optimizations?"
+Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
-### **Inference Questions**  
-- "How does KV caching work and what are its limitations?"
-- "Explain speculative decoding and when it's most effective"
-- "What's the difference between PTQ and QAT quantization?"
-
-### **Training Questions**
-- "Compare data parallelism vs pipeline parallelism"
-- "When would you use ZeRO Stage 3 vs other approaches?"
-- "How does MoE routing work and what are the challenges?"
-
----
-
-*These notes cover the essential optimization techniques for LLM systems. Focus on understanding the trade-offs and when each technique is most appropriate. Good luck with your interviews!*
+*This post covers the essential optimization techniques for large language models. Feel free to reach out if you'd like to discuss any of these topics in more detail!*
