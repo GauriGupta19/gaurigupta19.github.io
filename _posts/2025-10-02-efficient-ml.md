@@ -7,7 +7,7 @@ categories: ["Interview Prep", "Machine Learning", "Optimization"]
 excerpt: "Job preparation notes covering essential LLM optimization techniques for AI lab interviews. Quick reference for memory, compute, and inference optimization strategies."
 ---
 
-# Large Language Model Optimization: Memory, Compute, and Inference Techniques
+## Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
 When I was preparing for interviews at big AI labs, I found myself constantly reviewing the same core optimization concepts that kept coming up in technical discussions. These aren't comprehensive explanations, but rather the essential techniques I brushed up on and referenced during interviews at companies like Google, Meta, Anthropic, and other leading AI research labs.
 
@@ -15,11 +15,11 @@ Training and deploying large language models efficiently is one of the most crit
 
 ---
 
-## 1. Memory Optimization Techniques
+### 1. Memory Optimization Techniques
 
 Memory is the biggest bottleneck in LLM training/inference. These techniques reduce memory footprint while maintaining model quality.
 
-### 1.1 Flash Attention
+#### 1.1 Flash Attention
 
 The attention mechanism has quadratic time and memory complexity in sequence length, presenting significant runtime and memory challenges for longer sequences.
 Flash Attention reduces attention memory complexity from O(N²) to O(N) through tiling and recomputation techniques. Instead of processing entire attention matrices at once, it processes attention in blocks and stores normalization factors instead of full attention matrices. The tiling technique decomposes inputs based on shared memory size, while recomputation stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length).
