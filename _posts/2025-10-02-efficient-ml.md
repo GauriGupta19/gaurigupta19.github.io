@@ -212,15 +212,12 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
 
 ---
 
-### **Column-wise Parallelism**
+**Column-wise Parallelism**
 
-- **How it works:** The weight matrix is split along its columns. Each device holds a subset of columns and computes its portion of the output.
-- **Mathematically:**  
-  If input X and weight A = [A₁, A₂, ..., Aₙ], then  
-  Output O = [X @ A₁, X @ A₂, ..., X @ Aₙ]  
-  (Each device computes X @ Aᵢ for its assigned columns.)
-
-- **Diagram:**
+The weight matrix is split along its columns. Each device holds a subset of columns and computes its portion of the output.
+-   If input X and weight A = [A₁, A₂, ..., Aₙ], then  
+    Output O = [X @ A₁, X @ A₂, ..., X @ Aₙ]  
+    (Each device computes X @ Aᵢ for its assigned columns.)
 
   ```
   Input X
@@ -240,22 +237,18 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
               Output O
   ```
 
-- **Communication Overhead & Protocol:**  
-  After each device computes its partial output (X @ Aᵢ), the results must be **gathered and concatenated** (usually via an all-gather operation) to form the full output. This step incurs communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-gather** across devices.
+- After each device computes its partial output (X @ Aᵢ), the results must be **gathered and concatenated** (usually via an all-gather operation) to form the full output. This step incurs communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-gather** across devices.
 
 ---
 
-### **Row-wise Parallelism**
+**Row-wise Parallelism**
+In row-wise (sometimes called output) parallelism, the **input X is split column-wise** across devices, and the weight matrix A is split row-wise. Each device receives a slice of the input (a subset of columns of X) and a corresponding slice of the weight matrix (a subset of rows of A). Each device computes a partial output of the same shape as the final output, and the final result is obtained by **summing (reducing)** these partial outputs across all devices.
 
-- **How it works:** In row-wise (sometimes called output) parallelism, the **input X is split column-wise** across devices, and the weight matrix A is split row-wise. Each device receives a slice of the input (a subset of columns of X) and a corresponding slice of the weight matrix (a subset of rows of A). Each device computes a partial output of the same shape as the final output, and the final result is obtained by **summing (reducing)** these partial outputs across all devices.
-
-- **Mathematically:**  
-  If input X = [X₁, X₂, ..., Xₙ] (split column-wise) and weight A = [A₁; A₂; ...; Aₙ] (split row-wise), then  
+- If input X = [X₁, X₂, ..., Xₙ] (split column-wise) and weight A = [A₁; A₂; ...; Aₙ] (split row-wise), then  
   Each device computes: Oᵢ = Xᵢ @ Aᵢ  
   The final output: O = sum(O₁, O₂, ..., Oₙ) (element-wise addition across devices)
 
-- **Diagram:**
-
+- 
   ```
   Input X split by columns: [X₁ | X₂ | X₃]
     |             |      |      |
@@ -274,16 +267,8 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
                Output O
   ```
 
-- **Communication Overhead & Protocol:**  
-  After each device computes its partial output, the results must be **summed across devices** to obtain the final output. This introduces communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-reduce** across devices.
+- After each device computes its partial output, the results must be **summed across devices** to obtain the final output. This introduces communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-reduce** across devices.
 
----
-
-**Key Characteristics:**
-- Splits model computation and parameters across devices (vertically for column, horizontally for row)
-- Requires significant communication between layers, especially as the number of devices increases
-- Works best within a single node (high inter-GPU bandwidth)
-- Efficiency degrades beyond a single node due to increased communication overhead
 
 **Implementation**: Megatron-LM provides open-source tensor parallelism implementation.  
 For distributed attention in transformers, Megatron splits the Q, K, and V linear projections across devices, computes local attention scores and softmax independently, and then uses collective communication (such as all-reduce) to aggregate the partial attention outputs across devices for the final result.
