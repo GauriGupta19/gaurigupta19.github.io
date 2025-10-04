@@ -275,7 +275,7 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
   ```
 
 - **Communication Overhead & Protocol:**  
-  After each device computes its partial output, the results must be **summed across devices** (typically via an all-reduce operation) to obtain the final output. This introduces communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-reduce** across devices.
+  After each device computes its partial output, the results must be **summed across devices** to obtain the final output. This introduces communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-reduce** across devices.
 
 ---
 
