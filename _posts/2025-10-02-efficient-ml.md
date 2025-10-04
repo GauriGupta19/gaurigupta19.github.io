@@ -218,7 +218,7 @@ The weight matrix is split along its columns. Each device holds a subset of colu
 -   If input X and weight A = [A₁, A₂, ..., Aₙ], then  
     Output O = [X @ A₁, X @ A₂, ..., X @ Aₙ]  
     (Each device computes X @ Aᵢ for its assigned columns.)
-
+-  
   ```
   Input X
     |
