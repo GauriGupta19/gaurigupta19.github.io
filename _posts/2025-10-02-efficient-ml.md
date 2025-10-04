@@ -161,10 +161,11 @@ At the end of each minibatch, workers need to synchronize gradients or weights t
 
 These primitives are the building blocks for distributed training and are used to synchronize parameters, gradients, and optimizer states efficiently across multiple GPUs or nodes.
 All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/N bytes
+
 **Resources**:
 [1] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 [2] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
-[3] [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
+[3] [Understanding data parallelism, ZeRO, FSDP](https://www.youtube.com/watch?v=UVX7SYGCKkA)
 [4] [Communication overhead slides](https://docs.google.com/presentation/d/14SxjHdkvIw80FCAu5c1NGvFKDVF5DgvD2MJ1OwQ-5Gs/edit?slide=id.g24fe79ce068_0_154#slide=id.g24fe79ce068_0_154)
 
 
