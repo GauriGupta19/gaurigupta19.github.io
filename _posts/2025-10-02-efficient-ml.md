@@ -7,16 +7,15 @@ categories: ["Interview Prep", "Machine Learning", "Optimization"]
 excerpt: "Job preparation notes covering essential LLM optimization techniques for AI lab interviews. Quick reference for memory, compute, and inference optimization strategies."
 ---
 
-# Large Language Model Optimization Inteview Notes: Memory, Compute, and Inference Techniques
-*Essential techniques for LLM large scale optimizations - not comprehensive explanations but key concepts to know*
+# Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
 Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I'll share a comprehensive overview of optimization techniques across memory, compute, and inference dimensions.
 
 ---
+
 ## 1. Memory Optimization Techniques
 
-## **1. MEMORY OPTIMIZATION**
-*Memory is the biggest bottleneck in LLM training/inference. These techniques reduce memory footprint while maintaining model quality.*
+Memory is the biggest bottleneck in LLM training/inference. These techniques reduce memory footprint while maintaining model quality.
 
 ### 1.1 Flash Attention
 
@@ -119,10 +118,8 @@ Speculative decoding uses a smaller draft model to generate responses, then uses
 
 ---
 ## 4. Training Optimization
-## 4. Training Optimization
 
-## **4. TRAINING OPTIMIZATION**
-*Primer: Training large models requires sophisticated parallelism strategies. Know the different approaches and their trade-offs.*
+Training large models requires sophisticated parallelism strategies. Know the different approaches and their trade-offs.
 
 ### 4.1 Mixed Precision Training
 
