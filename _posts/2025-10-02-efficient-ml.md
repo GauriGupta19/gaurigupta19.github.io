@@ -131,6 +131,23 @@ Training large models requires sophisticated parallelism strategies. Know the di
 Mixed precision training uses bfloat16 and fp16 formats with loss scaling to reduce memory usage while maintaining training stability. This provides 2x memory reduction and faster training, but requires careful handling of numerical stability issues.
 
 #### 4.2. Data Parallelism
+DataParallel: Single-process, multi-threaded. Works when the model fits on a single GPU. Keep a copy of the model on each GPU. Do forward and backward pass for a microbatch on each GPU separately. Average the gradients, perform weight update and send the updated copy of the weights to all GPUs. The main bottleneck is that it relies on single-process, multi-threaded communication, leading to inefficient inter-GPU communication and potential slowdowns due to CPU overhead. DataParallel runs in a single process with multiple threads, so it suffers from GIL contention. At the end of each minibatch, workers need to synchronize gradients or weights to avoid staleness. There are two main synchronization approaches and both have clear pros & cons. 
+○ Bulk synchronous parallels (BSP): Workers sync data at the end of every minibatch. It prevents model weights staleness and good learning efficiency but each machine has to halt and wait for others to send gradients. 
+○ Asynchronous parallel (ASP): Every GPU worker processes the data asynchronously, no waiting or stalling. However, it can easily lead to stale weights being used and thus lower the statistical learning efficiency. Even though it increases the computation time, it may not speed up training time to convergence. 
+● Distributed Data Parallel: Each GPU has its own process. Can work on multiple nodes/machines. Uses Ring all reduce algorithm avoiding a central bottleneck. DDP has lower communication overhead. 
+● ZeRO: Not just the model parameters and graidents but the optimizer state (including avg, momentum from Adam) also take a lot of memory
+ZeRO-DP has three main optimization stages: 
+○ Optimizer State Partitioning: 4x memory reduction, same communication volume as DP. Gradient computation can be done independently for each GPU and when it is being done for parameters that are not on the current GPU, we incur a communication cost but this is the same as gradient averaging in DP. So always do this ZeRO stage-1.
+○ Add Gradient Partitioning: 8x memory reduction, same communication volume as DP. This is similar to optimizer state partitioning in practice. Optimizer states are calculated per parameter anyway so this doesn’t incur any extra cost. 
+○ Add Parameter Partitioning: Memory reduction is linear with DP degree Nd. For example, splitting across 64 GPUs (Nd = 64) will yield a 64x memory reduction. There is a modest 50% increase in communication volume. This works because at any time doing forward or backward, only a subset of parameters (in a layer) for example are required for the operation. At best you’re gonna need memory equivalent to a layer size. The model parameters can be sliced in any manner (vertically or horizontally). The way its different from tensor parallelism or pipeline parallelism is that every computation still happens on each GPU using full tensors, just that the parameters are not all on single GPU. 
+● FSDP (Fully Sharded Data Parallel): It is same as ZeRO. Just a different name. 
+● DeepSpeed: Deepspeed is an open source implementation of Zero-DP.
+
+Communication: all reduce = reduce scatter + all gather, 
+Ring-reduce -> overhead 2 * (N-1)  * X/N bytes
+Video: https://www.youtube.com/watch?v=UVX7SYGCKkA, https://www.youtube.com/watch?v=toUSzwR0EV8
+Communication overhead slides: https://docs.google.com/presentation/d/14SxjHdkvIw80FCAu5c1NGvFKDVF5DgvD2MJ1OwQ-5Gs/edit?slide=id.g24fe79ce068_0_154#slide=id.g24fe79ce068_0_154
+
 
 - **DataParallel**: Single-process, multi-threaded approach for single-GPU models
 - **Distributed Data Parallel (DDP)**: Each GPU has its own process, works across multiple nodes
@@ -146,21 +163,53 @@ Mixed precision training uses bfloat16 and fp16 formats with loss scaling to red
 [2] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
 #### 4.3 Pipeline Parallelism
+ Naive Model Parallel: Partition the model by layers and put each partition on a separate GPU. The main deficiency and why this one is called “naive” MP, is that all but one GPU is idle at any given moment.
+● Gpipe: Pipeline parallelism (PP) combines model parallelism with data parallelism to reduce inefficient time “bubbles’’. The main idea is to split one minibatch into multiple microbatches and enable each stage worker to process one microbatch simultaneously. Given m evenly split microbatches and d partitions, the bubble is 
+(d-1)/(m+d-1) 
+○ Activation Recomputation: Only activations at partition boundaries are saved and communicated between workers. Intermediate activations at intra-partition layers are still needed for computing gradients so they are recomputed during backward passes. With activation recomputation, the memory cost for training M(l) is 
+M(l) = O(l/d) + O(d) = O(sqrt(l)) 
+● Pipedream: It schedules each worker to alternatively process the forward and backward passes. PipeDream does not have an end-of-batch global gradient sync across all the workers, an naive implementation of 1F1B can easily lead to the forward and backward passes of one microbatch using different versions of model weights, thus lowering the learning efficiency. PipeDream proposed a few designs to tackle this issue: Weight stashing: Each worker keeps track of several model versions and makes sure that the same version of weights are used in the forward and backward passes given one data batch. Vertical Sync: The version of model weights flows between stage workers together with activations and gradients. Then the computation adopts the corresponding stashed version propagated from the previous worker. This process keeps version consistency across workers. 
+○ Pipedream-flush: PipeDream-flush adds a globally synchronized pipeline flush periodically, just like GPipe. 
+○ Pipedream-2BW: PipeDream-2BW maintains only two versions of model weights, where “2BW” is short for “double-buffered weights”. It generates a new model version every k microbatches and k should be larger than pipeline depth d. A newly updated model version cannot fully replace the old version immediately since some leftover backward passes still depend on the old version. In total only two versions need to be saved so the memory cost is much reduced. 
+● Breadth First Pipeline Parallelism: Looped pipeline with the principe of Gpipe constitutes breadth first search approach where as Looped pipeline with principe of 1F1B constitutes a depth first search approach. 
+● Zero Bubble Pipeline Parallelism: Split Backward pass into two: Backward for Input and Backward for weights. Backward for input needs to be done first, backward for weights can be done later. ○ ZB-H1: Bubble reduction is because B is initiated earlier across all workers compared to 1F1B, and the tail-end bubbles are filled by the later-starting W passes. 
+○ ZB-H2: We introduce more F passes during the warm-up phase to fill the bubble preceding the initial B. We also reorder the W passes at the tail, which changes the layout from trapezoid into a parallelogram, eliminating all the bubbles in the pipeline. 
+■ Bypassing optimizer synchronization: Use post-validation strategy to replace optimizer synchronization. 
+● LLAMA3: Current implementations of pipeline parallelism have batch size constraint, memory imbalance due to embedding layer and warmup microbatches and computation imbalance due to output & loss calculation making the last stage execution latency bottleneck. They modify the pipeline schedule to run an arbitrary number of microbatches in each batch. To balance the pipeline, we reduce one Transformer layer each from the first and the last stages, respectively. This means that the
+first model chunk on the first stage has only the embedding, and the last model chunk on the last stage has only output projection and loss calculation. 
+● DeepSeek-V3: The key idea of DualPipe is to overlap the computation and communication within a pair of individual forward and backward chunks. It employs a bidirectional pipeline scheduling, which feeds micro-batches from both ends of the pipeline simultaneously and a significant portion of communications can be fully overlapped. 
 
 - **GPipe**: Splits minibatches into microbatches, enabling simultaneous processing
 - **PipeDream**: Alternates forward and backward passes across workers
 - **Zero Bubble Pipeline**: Eliminates pipeline bubbles through advanced scheduling
 
 #### 4.4  Tensor Parallelism
+Column-wise Parallel: X, A= [A1,  A2] O = [X@A1,  X@A2] 
+● Row-wise Parallel X = [X1, X2], A = [A1 |  A2]  O = [X1 @ A1 + X2 @ A2] 
+			
+	
+● Column_wise Parallel first followed by Row-wise Parallel which naturally expects to split input by columns. 
+● TP splits the model vertically, partitioning the computation and parameters in each layer across multiple devices, requiring significant communication between each layer. As a result, they work well within a single node where the inter-GPU communication bandwidth is high, but the efficiency degrades quickly beyond a single node. 
+● Megatron-LM: Open source implementation of Tensor Parallelism
+
 splits matrix operations across GPUs, either column-wise or row-wise. Megatron-LM provides an open-source implementation of tensor parallelism for large language models.
 - **Column-wise Parallel**: Splits matrices by columns
 - **Row-wise Parallel**: Splits matrices by rows
 - **Megatron-LM**: Open source implementation of tensor parallelism
 
 #### 4.5 Context Parallelism
- splits sequence length across multiple GPUs, with each GPU handling a segment of the sequence. This is useful for very long sequences that don't fit on a single GPU.
+ splits sequence length across multiple GPUs, with each GPU handling a segment of the sequence. This is useful for very long sequences that don't fit on a single GPU. Context Parallelism is about how to parallelize the sequence length into multiple GPUs. During forward propagation, each GPU handles a segment of the sequence, storing only the necessary Key and Value (KV) pairs. In the backward pass, these KV pairs are reassembled across GPUs using advanced communication schemes like all-gather and reduce-scatter transformed into point-to-point communications in a ring topology. 
+
 
 #### 4.6 Expert Parallelism (MoE)
+Instead of every token being processed by the same dense network, we introduce a set of experts (sub-networks, usually feed-forward MLPs inside Transformer blocks). Each token is assigned (via a gating function) to one or a few experts. Experts are sharded across devices (GPUs/TPUs). Each device hosts a subset of experts, and tokens are routed to whichever device hosts their assigned expert.
+● Mixture of Experts: A router (usually a softmax gate) decides which expert(s) handle each token.
+Top-1 routing (Switch Transformer): pick the highest scoring expert.
+Top-k routing (GShard, GLaM): pick k experts and combine outputs.
+● Device Balance Loss: Some experts (on some GPUs) may get overloaded while others sit idle. This leads to device imbalance → bottlenecked training/inference. Add a regularization term (“device balance loss”) to the training objective that encourages an even distribution of tokens across devices.
+● Communication Balance Loss: 
+● Auxiliary Free Load Balancing: instead of adding a penalty in loss, use architectural o algorithmic tricks to achieve balance automatically - Randomized routing with constraints, Capacity-based routing (set a hard cap on tokens per expert), Priority dropping (drop excess tokens if an expert is full).
+
 routes tokens to specialized expert networks instead of processing every token with the same dense network. Routing can be Top-1 (single expert) or Top-k (multiple experts), with the main challenge being load balancing across experts. The benefit is scaling model size without proportional compute increase.
 
 ---
