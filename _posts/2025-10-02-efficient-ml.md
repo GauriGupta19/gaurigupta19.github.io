@@ -142,8 +142,8 @@ Mixed precision training uses bfloat16 and fp16 formats with loss scaling to red
 3. **Parameter Partitioning**: Linear memory reduction with DP degree
 
 **Resources**:
-- [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
-- [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
+[1] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
+[2] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
 #### 4.3 Pipeline Parallelism
 
@@ -166,13 +166,13 @@ routes tokens to specialized expert networks instead of processing every token w
 ---
 
 ### 5. Other Key Resources
-[1] [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
-[2] [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
-[3] [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
-[4] [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
-[5] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
-[6] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
-[7] [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
+- [1] [Stanford CS229s](https://cs229s.stanford.edu/fall2023/calendar/)
+- [2] [Stanford CS224n](https://web.stanford.edu/class/cs224n/)
+- [3] [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/user-guide/24.07/nemotoolkit/index.html)
+- [4] [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
+- [5] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
+- [6] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
+- [7] [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
 
 ---
 
