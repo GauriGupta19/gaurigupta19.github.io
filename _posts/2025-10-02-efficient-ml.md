@@ -247,32 +247,26 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
 
 ### **Row-wise Parallelism**
 
-- **How it works:** The input matrix is split along its rows, and the weight matrix is split along its rows as well. Each device computes a partial result, and the final output is obtained by summing across devices.
+- **How it works:** In row-wise (sometimes called output) parallelism, the **input X is split column-wise** across devices, and the weight matrix A is split row-wise. Each device receives a slice of the input (a subset of columns of X) and a corresponding slice of the weight matrix (a subset of rows of A). Each device computes a partial output of the same shape as the final output, and the final result is obtained by **summing (reducing)** these partial outputs across all devices.
+
 - **Mathematically:**  
-  If input X = [X₁, X₂, ..., Xₙ] and weight A = [A₁; A₂; ...; Aₙ] (split row-wise), then  
-  Output O = X₁ @ A₁ + X₂ @ A₂ + ... + Xₙ @ Aₙ  
-  (Each device computes Xᵢ @ Aᵢ for its assigned rows.)
+  If input X = [X₁, X₂, ..., Xₙ] (split column-wise) and weight A = [A₁; A₂; ...; Aₙ] (split row-wise), then  
+  Each device computes: Oᵢ = Xᵢ @ Aᵢ  
+  The final output: O = sum(O₁, O₂, ..., Oₙ) (element-wise addition across devices)
 
 - **Diagram:**
 
   ```
-  Input X split by rows: [X₁]
-                         [X₂]
-                         [X₃]
-    |           ┌─────┐
-    |           │ A₁  │   (A split row-wise)
-    |           └─────┘
-    |           ┌─────┐
-    |           │ A₂  │
-    |           └─────┘
-    |           ┌─────┐
-    |           │ A₃  │
-    |           └─────┘
+  Input X split by columns: [X₁ | X₂ | X₃]
     |             |      |      |
     |             v      v      v
     |         Device 1 Device 2 Device 3
-    |             |      |      |
-    |         [X₁@A₁] [X₂@A₂] [X₃@A₃]
+    |           |        |        |
+    |         ┌─────┐  ┌─────┐  ┌─────┐
+    |         │ A₁  │  │ A₂  │  │ A₃  │   (A split row-wise)
+    |         └─────┘  └─────┘  └─────┘
+    |           |        |        |
+    |        [X₁@A₁] [X₂@A₂] [X₃@A₃]
     |_____________|______|______|
                   |
                Reduce (sum)
@@ -291,7 +285,8 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
 - Works best within a single node (high inter-GPU bandwidth)
 - Efficiency degrades beyond a single node due to increased communication overhead
 
-**Implementation**: Megatron-LM provides open-source tensor parallelism implementation
+**Implementation**: Megatron-LM provides open-source tensor parallelism implementation.  
+For distributed attention in transformers, Megatron splits the Q, K, and V linear projections across devices, computes local attention scores and softmax independently, and then uses collective communication (such as all-reduce) to aggregate the partial attention outputs across devices for the final result.
 
 **Resources**:
 [1] [Megatron-LM Paper](https://arxiv.org/abs/1909.08053)
