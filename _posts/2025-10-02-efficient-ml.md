@@ -130,9 +130,7 @@ Training large models requires sophisticated parallelism strategies. Know the di
 
 Mixed precision training uses bfloat16 and fp16 formats with loss scaling to reduce memory usage while maintaining training stability. This provides 2x memory reduction and faster training, but requires careful handling of numerical stability issues.
 
-#### 4.2 Parallelism Approaches
-
-**Data Parallelism** 
+#### 4.2. Data Parallelism
 
 - **DataParallel**: Single-process, multi-threaded approach for single-GPU models
 - **Distributed Data Parallel (DDP)**: Each GPU has its own process, works across multiple nodes
@@ -147,22 +145,22 @@ Mixed precision training uses bfloat16 and fp16 formats with loss scaling to red
 - [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 
-##### 4.2.2 Pipeline Parallelism
+#### 4.3 Pipeline Parallelism
 
 - **GPipe**: Splits minibatches into microbatches, enabling simultaneous processing
 - **PipeDream**: Alternates forward and backward passes across workers
 - **Zero Bubble Pipeline**: Eliminates pipeline bubbles through advanced scheduling
 
-##### 4.2.3  Tensor Parallelism
+#### 4.4  Tensor Parallelism
 splits matrix operations across GPUs, either column-wise or row-wise. Megatron-LM provides an open-source implementation of tensor parallelism for large language models.
 - **Column-wise Parallel**: Splits matrices by columns
 - **Row-wise Parallel**: Splits matrices by rows
 - **Megatron-LM**: Open source implementation of tensor parallelism
 
-##### 4.2.4 Context Parallelism
+#### 4.5 Context Parallelism
  splits sequence length across multiple GPUs, with each GPU handling a segment of the sequence. This is useful for very long sequences that don't fit on a single GPU.
 
-##### 4.2.5 Expert Parallelism (MoE)
+#### 4.6 Expert Parallelism (MoE)
 routes tokens to specialized expert networks instead of processing every token with the same dense network. Routing can be Top-1 (single expert) or Top-k (multiple experts), with the main challenge being load balancing across experts. The benefit is scaling model size without proportional compute increase.
 
 ---
