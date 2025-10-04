@@ -71,7 +71,7 @@ Inference is where most production costs occur. These techniques dramatically sp
 
 #### 3.1 KV Caching
 
-KV caching stores computed key-value pairs to avoid recomputation during generation. This is essential for efficient autoregressive generation.
+KV caching works by storing the key and value tensors computed for each token as the model generates a sequence. In autoregressive generation, at each new step, the model only needs to compute attention for the newly generated token, using the cached keys and values from previous steps instead of recomputing them for the entire sequence. This drastically reduces both computation and memory usage, as the attention mechanism can reuse the stored key-value pairs for all previous tokens.
 
 **Advanced KV Cache Optimizations**:
 - **Grouped Multi Query Attention**: Reduces KV cache memory by grouping multiple queries with same keys and values
@@ -94,13 +94,7 @@ KV cache organized in a tree structure with LRU (least recently used) eviction, 
 
 Speculative decoding uses a smaller draft model to generate responses, then uses the target model to verify them, achieving 2-3x speedup in inference. The draft model must be fast and well-aligned with the target model for this technique to be effective.
 
-#### 3.4 Model Compression
-**Distillation** trains smaller "student" models by transferring knowledge from larger "teacher" models, trading model quality for size and speed improvements.
-
-**Quantization** compresses models by representing weights and activations with fewer bits. Post-training quantization (PTQ) is cheap to implement but can fail with outlier features in large models, while quantization-aware training (QAT) applies quantization during training for better quality but higher cost. Different quantization methods include min/max (simple but susceptible to outliers), MSE (minimizes mean squared error), and cross-entropy (preserves order of largest values for softmax).
-
 #### 3.4 Quantization Techniques
-
 Compressing a model by representing weights/activations with fewer bits instead of standard fp32 (32-bit float).
 
 **Quantization Types**:
@@ -109,12 +103,11 @@ Compressing a model by representing weights/activations with fewer bits instead 
 - **Cross-entropy**: Preserves order of largest values after quantization for softmax; argmin(softmax(v), softmax(v’))
 
 
-**Post-Training Quantization (PTQ)**: A model is first trained to convergence and then we convert its weights to lower precision without more training. It is usually quite cheap to implement, in comparison to training. As the model size continues to grow to billions of parameters, outlier features of high magnitude start to emerge in all transformer layers, causing failure of simple low-bit quantization. To quantize the input x, attach observers that collect statistical data like mean and std and use it to quantize.
-■ Mixed-precision quantization: Don’t quantize everything to the same bit width. Implement quantization at different precision for weights vs activation. 
+**Post-Training Quantization (PTQ)**: After fully training a model, its weights are converted to lower precision (e.g., int8 or float16) without further training. PTQ is generally inexpensive to implement compared to retraining, but as model sizes scale to billions of parameters, outlier activations of large magnitude can appear in transformer layers, making naive low-bit quantization less effective. To address this, quantization-aware observers are attached to collect statistics (such as mean and standard deviation) on the input data, which are then used to determine quantization parameters.
 
+**Mixed-Precision Quantization**: Instead of quantizing all weights and activations to the same bit width, mixed-precision quantization assigns different precisions to different parts of the model. For example, sensitive layers or activations may use higher precision (e.g., 8 or 16 bits), while less sensitive parts use lower precision. This approach balances memory savings and model accuracy, and is especially useful for large models where uniform low-bit quantization would degrade performance. Mixed-precision quantization can be applied separately to weights and activations, optimizing for both efficiency and quality.
 
-**Quantization-Aware Training (QAT)**: Quantization is applied during pre-training or further fine-tuning. Siimulate quantization and dequantization in the forward pass. This simulaes the quantization error and acts as a regualizer to make the model robust to it. 
-Backprop: quantization is not differentiable. Approx gradient with STE(straight-through approximator) -> 1 in range(alpha, beta) and 0 outside
+**Quantization-Aware Training (QAT)**: Quantization is applied during pre-training or further fine-tuning. Siimulate quantization and dequantization in the forward pass. This simulaes the quantization error and acts as a regualizer to make the model robust to it. Backpropagation: Quantization is not differentiable, so gradients are approximated using the straight-through estimator (STE), which sets the gradient to 1 within the quantization range (alpha, beta) and 0 outside.
 
 
 **Resources**:
@@ -128,7 +121,7 @@ Training large models requires sophisticated parallelism strategies. Know the di
 
 #### 4.1 Mixed Precision Training
 
-Mixed precision training uses bfloat16 and fp16 formats with loss scaling to reduce memory usage while maintaining training stability. This provides 2x memory reduction and faster training, but requires careful handling of numerical stability issues.
+Mixed precision training leverages lower-precision number formats, most notably bfloat16 (Brain Floating Point 16), to reduce memory usage and accelerate training. Bfloat16 has the same exponent range as standard 32-bit floats (fp32), but with fewer mantissa bits, allowing it to represent very large and very small numbers, which helps preserve the dynamic range needed for deep learning. However, because bfloat16 and fp16 have reduced precision, gradients can underflow or overflow during backpropagation, leading to instability. To address this, loss scaling is used: the loss is multiplied by a large constant before backpropagation, and gradients are later rescaled down, preventing small gradients from vanishing due to limited precision. Careful management of loss scaling is essential to maintain numerical stability and fully realize the benefits of mixed precision training.
 
 #### 4.2 Data Parallelism
 
@@ -155,8 +148,19 @@ At the end of each minibatch, workers need to synchronize gradients or weights t
 - **FSDP (Fully Sharded Data Parallel)**: PyTorch's implementation of ZeRO
 - **DeepSpeed**: Microsoft's open-source implementation of ZeRO
 
-**Communication**: All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/N bytes
+**Communication Primitives**:
 
+- **All-Reduce**: Each process starts with its own data and ends up with the sum (or other reduction) of all data across processes. Commonly used for synchronizing gradients. Can be implemented as a combination of reduce-scatter followed by all-gather.  
+- **Ring All-Reduce**: Each GPU sends and receives data in a ring topology, minimizing bandwidth bottlenecks. Communication overhead: 2 × (N-1) × X/N bytes, where N is the number of GPUs and X is the data size.
+- **Reduce-Scatter**: Each process reduces (e.g., sums) a chunk of data across all processes and keeps only its own chunk. Used as the first step in optimized all-reduce.
+- **All-Gather**: Each process gathers data chunks from all other processes so that everyone ends up with the complete data. Used as the second step in optimized all-reduce.
+- **Broadcast**: One process sends data to all others (e.g., distributing model weights at initialization).
+- **Reduce**: Data from all processes is reduced (e.g., summed) and the result is sent to a single process.
+- **Scatter**: One process splits data and sends different chunks to each process.
+- **Gather**: Each process sends data to a single process, which collects all the data.
+
+These primitives are the building blocks for distributed training and are used to synchronize parameters, gradients, and optimizer states efficiently across multiple GPUs or nodes.
+All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/N bytes
 **Resources**:
 [1] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 [2] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
@@ -204,14 +208,88 @@ At the end of each minibatch, workers need to synchronize gradients or weights t
 
 #### 4.4 Tensor Parallelism
 
-**Column-wise Parallel**: X, A = [A1, A2] → O = [X@A1, X@A2]
-**Row-wise Parallel**: X = [X1, X2], A = [A1|A2] → O = X1@A1 + X2@A2
+**Tensor Parallelism** splits large matrix multiplications across multiple devices, enabling efficient scaling of model size. The two most common approaches are **column-wise** and **row-wise** parallelism.
 
-**Key Characteristics**:
-- Splits model vertically, partitioning computation and parameters across devices
-- Requires significant communication between layers
-- Works well within single nodes (high inter-GPU bandwidth)
-- Efficiency degrades beyond single node due to communication overhead
+---
+
+### **Column-wise Parallelism**
+
+- **How it works:** The weight matrix is split along its columns. Each device holds a subset of columns and computes its portion of the output.
+- **Mathematically:**  
+  If input X and weight A = [A₁, A₂, ..., Aₙ], then  
+  Output O = [X @ A₁, X @ A₂, ..., X @ Aₙ]  
+  (Each device computes X @ Aᵢ for its assigned columns.)
+
+- **Diagram:**
+
+  ```
+  Input X
+    |
+    |         ┌─────┬─────┬─────┐
+    |         │ A₁  │ A₂  │ A₃  │   (A split column-wise)
+    |         └─────┴─────┴─────┘
+    |           |     |     |
+    |           v     v     v
+    |        Device 1 2 ... n
+    |           |     |     |
+    |         [X@A₁] [X@A₂] [X@A₃]
+    |___________|_____|_____|
+                |
+             Concatenate
+                |
+              Output O
+  ```
+
+- **Communication Overhead & Protocol:**  
+  After each device computes its partial output (X @ Aᵢ), the results must be **gathered and concatenated** (usually via an all-gather operation) to form the full output. This step incurs communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-gather** across devices.
+
+---
+
+### **Row-wise Parallelism**
+
+- **How it works:** The input matrix is split along its rows, and the weight matrix is split along its rows as well. Each device computes a partial result, and the final output is obtained by summing across devices.
+- **Mathematically:**  
+  If input X = [X₁, X₂, ..., Xₙ] and weight A = [A₁; A₂; ...; Aₙ] (split row-wise), then  
+  Output O = X₁ @ A₁ + X₂ @ A₂ + ... + Xₙ @ Aₙ  
+  (Each device computes Xᵢ @ Aᵢ for its assigned rows.)
+
+- **Diagram:**
+
+  ```
+  Input X split by rows: [X₁]
+                         [X₂]
+                         [X₃]
+    |           ┌─────┐
+    |           │ A₁  │   (A split row-wise)
+    |           └─────┘
+    |           ┌─────┐
+    |           │ A₂  │
+    |           └─────┘
+    |           ┌─────┐
+    |           │ A₃  │
+    |           └─────┘
+    |             |      |      |
+    |             v      v      v
+    |         Device 1 Device 2 Device 3
+    |             |      |      |
+    |         [X₁@A₁] [X₂@A₂] [X₃@A₃]
+    |_____________|______|______|
+                  |
+               Reduce (sum)
+                  |
+               Output O
+  ```
+
+- **Communication Overhead & Protocol:**  
+  After each device computes its partial output, the results must be **summed across devices** (typically via an all-reduce operation) to obtain the final output. This introduces communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-reduce** across devices.
+
+---
+
+**Key Characteristics:**
+- Splits model computation and parameters across devices (vertically for column, horizontally for row)
+- Requires significant communication between layers, especially as the number of devices increases
+- Works best within a single node (high inter-GPU bandwidth)
+- Efficiency degrades beyond a single node due to increased communication overhead
 
 **Implementation**: Megatron-LM provides open-source tensor parallelism implementation
 
@@ -231,7 +309,10 @@ Context Parallelism is about how to parallelize the sequence length into multipl
 
 Instead of every token being processed by the same dense network, we introduce a set of experts (sub-networks, usually feed-forward MLPs inside Transformer blocks). Each token is assigned (via a gating function) to one or a few experts. Experts are sharded across devices (GPUs/TPUs). Each device hosts a subset of experts, and tokens are routed to whichever device hosts their assigned expert.
 
-**Mixture of Experts**: A router (usually a softmax gate) decides which expert(s) handle each token.
+**Mixture of Experts (MoE)**: Instead of every token being processed by the same dense network, a set of experts (sub-networks, typically feed-forward MLPs) is introduced. A router—usually implemented as a softmax gate—assigns each token to one or more experts based on routing strategies:
+
+- **Top-1 routing** (e.g., Switch Transformer): Each token is sent to the single highest-scoring expert.
+- **Top-k routing** (e.g., GShard, GLaM): Each token is sent to the top k experts, and their outputs are combined.
 
 **Routing Strategies**:
 - **Top-1 routing** (Switch Transformer): Pick the highest scoring expert
@@ -248,8 +329,6 @@ Some experts (on some GPUs) may get overloaded while others sit idle. This leads
   - Randomized routing with constraints
   - Capacity-based routing (set a hard cap on tokens per expert)
   - Priority dropping (drop excess tokens if an expert is full)
-
-**Benefits**: Scale model size without proportional compute increase
 
 **Resources**:
 [1] [Switch Transformer Paper](https://arxiv.org/abs/2101.03961)
