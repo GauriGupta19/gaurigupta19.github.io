@@ -9,7 +9,7 @@ excerpt: "Job preparation notes covering essential LLM optimization techniques f
 
 ## Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
-When I was preparing for interviews at big AI labs, I found myself constantly reviewing the same core optimization concepts that kept coming up in technical discussions. These aren't comprehensive explanations, but rather the essential techniques I brushed up on and referenced during interviews at companies like Google, Meta, Anthropic, and other leading AI research labs.
+Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes — part interview preparation, part personal revision — and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that I found most useful and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
 
 Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I'll share the optimization techniques that proved most valuable during my interview preparation and actual technical discussions.
 
@@ -218,7 +218,7 @@ The weight matrix is split along its columns. Each device holds a subset of colu
 -   If input X and weight A = [A₁, A₂, ..., Aₙ], then  
     Output O = [X @ A₁, X @ A₂, ..., X @ Aₙ]  
     (Each device computes X @ Aᵢ for its assigned columns.)
-    
+
 -  
   ```
   Input X
@@ -334,4 +334,3 @@ Some experts (on some GPUs) may get overloaded while others sit idle. This leads
 
 Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
-*This post covers the essential optimization techniques for large language models. Feel free to reach out if you'd like to discuss any of these topics in more detail!*
