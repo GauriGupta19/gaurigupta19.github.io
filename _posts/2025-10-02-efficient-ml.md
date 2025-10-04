@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "LLM Optimization Interview Notes: Memory, Compute & Inference Techniques"
+title: "LLM Optimization Notes: Memory, Compute & Inference Techniques"
 date: 2024-01-15
 author: "Gauri Gupta"
-categories: ["Interview Prep", "Machine Learning", "Optimization"]
+categories: ["LLMs", "Distributed ML", "Optimization"]
 excerpt: "Job preparation notes covering essential LLM optimization techniques for AI lab interviews. Quick reference for memory, compute, and inference optimization strategies."
 ---
 
