@@ -210,8 +210,6 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
 
 **Tensor Parallelism** splits large matrix multiplications across multiple devices, enabling efficient scaling of model size. The two most common approaches are **column-wise** and **row-wise** parallelism.
 
----
-
 **Column-wise Parallelism**
 
 The weight matrix is split along its columns. Each device holds a subset of columns and computes its portion of the output.
@@ -239,8 +237,6 @@ The weight matrix is split along its columns. Each device holds a subset of colu
   ```
 
 - After each device computes its partial output (X @ Aᵢ), the results must be **gathered and concatenated** (usually via an all-gather operation) to form the full output. This step incurs communication overhead proportional to the output size and the number of devices. The protocol is typically an **all-gather** across devices.
-
----
 
 **Row-wise Parallelism**
 In row-wise (sometimes called output) parallelism, the **input X is split column-wise** across devices, and the weight matrix A is split row-wise. Each device receives a slice of the input (a subset of columns of X) and a corresponding slice of the weight matrix (a subset of rows of A). Each device computes a partial output of the same shape as the final output, and the final result is obtained by **summing (reducing)** these partial outputs across all devices.
