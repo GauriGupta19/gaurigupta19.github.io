@@ -53,13 +53,13 @@ A training technique where multiple training sequences are concatenated into one
 
 #### 2.2 Efficient Transformers
 
-**BigBird**: Uses a combination of local, random, and global attention patterns to reduce complexity to O(n).
+- **BigBird**: Uses a combination of local, random, and global attention patterns to reduce complexity to O(n).
 
-**Longformer**: Utilizes sliding window (local) attention combined with global attention for improved efficiency.
+- **Longformer**: Utilizes sliding window (local) attention combined with global attention for improved efficiency.
 
-**Low-Rank Approximations**: Projects key and value matrices into lower-dimensional spaces.
+- **Low-Rank Approximations**: Projects key and value matrices into lower-dimensional spaces.
 
-**LongNet**: At lower layers, tokens attend to nearby tokens (small dilation). At higher layers, dilation factor grows, allowing tokens to reach further. Scales linearly with sequence length O(Nd).
+- **LongNet**: At lower layers, tokens attend to nearby tokens (small dilation). At higher layers, dilation factor grows, allowing tokens to reach further. Scales linearly with sequence length O(Nd).
 
 **Resources**: [1][Scaling Transformers with LongNet](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
 
