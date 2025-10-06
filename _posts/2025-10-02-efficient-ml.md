@@ -9,9 +9,11 @@ excerpt: "Job preparation notes covering essential LLM optimization techniques f
 
 ## Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
-Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes, part interview preparation, part personal revision, and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that I found most useful and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
+Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes, part interview preparation, part personal revision, and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that are core to large-scale model development and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
 
-Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I'll share the optimization techniques that proved most valuable during my interview preparation and actual technical discussions.
+Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I've compiled the optimization techniques I studied as part of my preparation journey during my interview preparation and also came up multiple times during the actual technical discussions.
+
+Also, this is not meant to cover all techniques in detail but mostly covers the breadth of topics that are be core and are most common practices when building or deploying models at a large scale. 
 
 ---
 
@@ -28,7 +30,7 @@ Flash Attention reduces attention memory complexity through tiling and recomputa
 
 **Recomputation Technique**: Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
 
-**Resources**:
+**Additional Resources**:
 [1] [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
 [2] [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 
@@ -60,7 +62,7 @@ As sequence lengths and dataset sizes grow, standard transformer architectures b
 - **Low-Rank Approximations**: Projects key and value matrices into lower-dimensional spaces.
 - **LongNet**: At lower layers, tokens attend to nearby tokens (small dilation). At higher layers, dilation factor grows, allowing tokens to reach further. Scales linearly with sequence length O(Nd).
 
-**Resources**: [1][Scaling Transformers with LongNet](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
+**Additional Resources**: [1][Scaling Transformers with LongNet](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
 
 ---
 
@@ -78,7 +80,7 @@ KV caching works by storing the key and value tensors computed for each token as
 - Cross Layer KV-sharing: Ties KV cache across neighboring attention layers
 - Interleaving Local and Global Attention**: Uses global attention in every 4-6 layers
 
-**Resources**:
+**Additional Resources**:
 [1] [KV Caching Video](https://www.youtube.com/watch?v=Mn_9W1nCFLo&t=3869s)
 [2] [FLOPS computation efficiency with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
@@ -108,7 +110,7 @@ Compressing a model by representing weights/activations with fewer bits instead 
 
 **Quantization-Aware Training (QAT)**: Quantization is applied during pre-training or further fine-tuning. Siimulate quantization and dequantization in the forward pass. This simulaes the quantization error and acts as a regualizer to make the model robust to it. Backpropagation: Quantization is not differentiable, so gradients are approximated using the straight-through estimator (STE), which sets the gradient to 1 within the quantization range (alpha, beta) and 0 outside.
 
-**Resources**:
+**Additional Resources**:
 [1] [Quantization Video](https://www.youtube.com/watch?v=0VdNflU08yA)
 [2] [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
@@ -156,7 +158,7 @@ At the end of each minibatch, workers need to synchronize gradients or weights t
 These primitives are the building blocks for distributed training and are used to synchronize parameters, gradients, and optimizer states efficiently across multiple GPUs or nodes.
 All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/N bytes
 
-**Resources**:
+**Additional Resources**:
 [1] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 [2] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
 [3] [Understanding data parallelism, ZeRO, FSDP](https://www.youtube.com/watch?v=UVX7SYGCKkA)
@@ -196,7 +198,7 @@ All-reduce = reduce-scatter + all-gather. Ring-reduce overhead: 2 × (N-1) × X/
 
 - **DeepSeek-V3**: The key idea of DualPipe is to overlap the computation and communication within a pair of individual forward and backward chunks. It employs a bidirectional pipeline scheduling, which feeds micro-batches from both ends of the pipeline simultaneously and a significant portion of communications can be fully overlapped.
 
-**Resources**:
+**Additional Resources**:
 [1] [GPipe Paper](https://arxiv.org/abs/1811.06965)
 [2] [PipeDream Paper](https://arxiv.org/abs/1806.03377)
 [3] [Zero Bubble Pipeline](https://arxiv.org/abs/2011.06448)
@@ -266,7 +268,7 @@ In row-wise (sometimes called output) parallelism, the **input X is split column
 **Implementation**: Megatron-LM provides open-source tensor parallelism implementation.  
 For distributed attention in transformers, Megatron splits the Q, K, and V linear projections across devices, computes local attention scores and softmax independently, and then uses collective communication (such as all-reduce) to aggregate the partial attention outputs across devices for the final result.
 
-**Resources**:
+**Additional Resources**:
 [1] [Megatron-LM Paper](https://arxiv.org/abs/1909.08053)
 [2] [Megatron-LM GitHub](https://github.com/NVIDIA/Megatron-LM)
 
@@ -274,7 +276,7 @@ For distributed attention in transformers, Megatron splits the Q, K, and V linea
 
 Context Parallelism is about how to parallelize the sequence length into multiple GPUs. During forward propagation, each GPU handles a segment of the sequence, storing only the necessary Key and Value (KV) pairs. In the backward pass, these KV pairs are reassembled across GPUs using advanced communication schemes like all-gather and reduce-scatter transformed into point-to-point communications in a ring topology.
 
-**Resources**:
+**Additional Resources**:
 [1] [Context Parallelism Paper](https://arxiv.org/abs/2105.03824)
 [2] [Sequence Parallelism](https://arxiv.org/abs/2104.04473)
 
@@ -295,7 +297,7 @@ In practice, load balancing can be a significant challenge in expert parallelism
   - Capacity-based routing (set a hard cap on tokens per expert)
   - Priority dropping (drop excess tokens if an expert is full)
 
-**Resources**:
+**Additional Resources**:
 [1] [Switch Transformer Paper](https://arxiv.org/abs/2101.03961)
 [2] [GLaM Paper](https://arxiv.org/abs/2112.06905)
 [3] [GShard Paper](https://arxiv.org/abs/2006.16668)
@@ -315,6 +317,8 @@ In practice, load balancing can be a significant challenge in expert parallelism
 ---
 
 ### Conclusion
+
+Thanks for dropping by and reading till the end! Hope this was helpful in your journey!
 
 Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
