@@ -9,17 +9,17 @@ excerpt: "Job preparation notes covering essential LLM optimization techniques f
 
 ## Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
-Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes, part interview preparation, part personal revision, and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that are core to large-scale model development and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
+Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes, part interview preparation, part personal revision, and thought they might be worth sharing. 
 
-Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I've compiled the optimization techniques I studied as part of my preparation journey during my interview preparation and also came up multiple times during the actual technical discussions.
+Training and deploying large language models efficiently has become one of the most critical challenges in modern AI. As models scale into the billions of parameters, traditional approaches quickly start to break down. The techniques outlined here highlight some of the essential optimization strategies that have emerged as industry standards for building and deploying large-scale models.
 
-Also, this is not meant to cover all techniques in detail but mostly covers the breadth of topics that are be core and are most common practices when building or deploying models at a large scale. 
+These notes aren’t meant to be exhaustive or perfectly structured, but rather a reflection of the key concepts and techniques that repeatedly came up in technical discussions and that form the backbone of large-scale model development. Also, this is not a deeply detailed discussions of each topic, but rather a high-level overview of the core approaches and concepts providing a concise summary of the most common practices and ideas used in efficient training and inference. I hope they’re useful to anyone looking to dive deeper into these optimization techniques or preparing for similar technical interviews.
 
 ---
 
 ### 1. Memory Optimization Techniques
 
-Memory is the biggest bottleneck in LLM training/inference. These techniques reduce memory footprint while maintaining model quality.
+Memory is the biggest bottleneck in LLM training and inference. As models scale to billions of parameters, traditional memory management approaches become insufficient. The techniques in this section focus on reducing memory footprint while maintaining model quality, enabling the training and deployment of larger models on existing hardware.
 
 #### 1.1 Flash Attention
 
