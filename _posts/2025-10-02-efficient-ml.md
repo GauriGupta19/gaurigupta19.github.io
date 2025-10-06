@@ -310,7 +310,7 @@ In practice, load balancing can be a significant challenge in expert parallelism
 - [4] [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 - [5] [Scaling ML Models](https://www.youtube.com/watch?v=hc0u4avAkuM)
 - [6] [Training Optimization](https://www.youtube.com/watch?v=toUSzwR0EV8)
-- [7] [Communication Overhead](https://www.youtube.com/watch?v=UVX7SYGCKkA)
+- [7] [Efficient Training and Tradeoffs](https://www.youtube.com/watch?v=UVX7SYGCKkA)
 
 ---
 
