@@ -9,7 +9,7 @@ excerpt: "Job preparation notes covering essential LLM optimization techniques f
 
 ## Large Language Model Optimization: Memory, Compute, and Inference Techniques
 
-Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes — part interview preparation, part personal revision — and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that I found most useful and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
+Here is a collection of my personal notes from preparing for interviews at several leading AI labs and revisiting the core ideas behind efficient large-scale model training. Along the way, I compiled these notes, part interview preparation, part personal revision, and thought they might be worth sharing. They are not meant to be exhaustive or perfectly structured, but rather a reflection of the concepts and techniques that I found most useful and that came up repeatedly in discussions. I hope they are helpful to anyone going through a similar preparation journey.
 
 Training and deploying large language models efficiently is one of the most critical challenges in modern AI. As models grow to billions of parameters, traditional approaches quickly become infeasible. In this post, I'll share the optimization techniques that proved most valuable during my interview preparation and actual technical discussions.
 
