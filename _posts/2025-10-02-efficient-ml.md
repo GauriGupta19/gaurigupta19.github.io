@@ -13,7 +13,7 @@ Here is a collection of my personal notes from preparing for interviews at sever
 
 Training and deploying large language models efficiently has become one of the most critical challenges in modern AI. As models scale into the billions of parameters, traditional approaches quickly start to break down. The techniques outlined here highlight some of the essential optimization strategies that have emerged as industry standards for building and deploying large-scale models.
 
-These notes aren’t meant to be exhaustive or perfectly structured, but rather a reflection of the key concepts and techniques that repeatedly came up in technical discussions and that form the backbone of large-scale model development. Also, this is not a deeply detailed discussions of each topic, but rather a high-level overview of the core approaches and concepts providing a concise summary of the most common practices and ideas used in efficient training and inference. I hope they’re useful to anyone looking to dive deeper into these optimization techniques or preparing for similar technical interviews.
+These notes aren’t meant to be exhaustive or perfectly structured, but rather a reflection of the key concepts and techniques that repeatedly came up in technical discussions and that form the backbone of large-scale model development. This is also not a deeply detailed discussion of each topic, but rather a high-level overview of the core approaches and concepts providing a concise summary of the most common practices and ideas used in efficient training and inference. I hope they’re useful to anyone looking to dive deeper into these optimization techniques or preparing for similar technical interviews.
 
 ---
 
