@@ -28,7 +28,7 @@ Flash Attention reduces attention memory complexity through tiling and recomputa
 
 **Recomputation Technique**: Stores softmax normalization factors (linear to sequence length) instead of softmax results (quadratic to sequence length), using these factors to recompute attention scores. This reduces memory requirements and I/O traffic between global and shared memory.
 
-**Key Resources**:
+**Resources**:
 [1] [Matrix multiplication tiling](https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html)
 [2] [Online softmax and tiling](https://www.youtube.com/watch?v=LKwyHWYEIMQ&t=14s)
 
@@ -37,7 +37,7 @@ Flash Attention reduces attention memory complexity through tiling and recomputa
 - **MQA (Multi-Query Attention)**: Reduces memory by sharing keys and values across attention heads
 - **GQA (Grouped Query Attention)**: Balances efficiency and quality by grouping queries
 
-#### 1.3 Activation Recomputation
+#### 1.3 Activation Checkpointing
 
 Input activations easily saturate device memory when training LLMs with large sequence lengths or micro-batch sizes. Checkpointing a few activations and recomputing the rest reduces device memory requirements.
 
@@ -53,12 +53,11 @@ A training technique where multiple training sequences are concatenated into one
 
 #### 2.2 Efficient Transformers
 
+As sequence lengths and dataset sizes grow, standard transformer architectures become prohibitively expensive due to their quadratic time and memory complexity with respect to sequence length. Efficient transformer techniques have been developed to address these limitations, enabling the processing of much longer sequences and larger datasets by reducing computational and memory requirements.
+
 - **BigBird**: Uses a combination of local, random, and global attention patterns to reduce complexity to O(n).
-
 - **Longformer**: Utilizes sliding window (local) attention combined with global attention for improved efficiency.
-
 - **Low-Rank Approximations**: Projects key and value matrices into lower-dimensional spaces.
-
 - **LongNet**: At lower layers, tokens attend to nearby tokens (small dilation). At higher layers, dilation factor grows, allowing tokens to reach further. Scales linearly with sequence length O(Nd).
 
 **Resources**: [1][Scaling Transformers with LongNet](https://www.youtube.com/watch?v=nC2nU9j9DVQ)
@@ -74,14 +73,14 @@ Inference is where most production costs occur. These techniques dramatically sp
 KV caching works by storing the key and value tensors computed for each token as the model generates a sequence. In autoregressive generation, at each new step, the model only needs to compute attention for the newly generated token, using the cached keys and values from previous steps instead of recomputing them for the entire sequence. This drastically reduces both computation and memory usage, as the attention mechanism can reuse the stored key-value pairs for all previous tokens.
 
 **Advanced KV Cache Optimizations**:
-- **Grouped Multi Query Attention**: Reduces KV cache memory by grouping multiple queries with same keys and values
-- **Multi-head Latent Attention**: Projects K, V, Q into lower-dimensional latent space, computing attention in latent space then projecting back
-- **Cross Layer KV-sharing**: Ties KV cache across neighboring attention layers
-- **Interleaving Local and Global Attention**: Uses global attention in every 4-6 layers
+- Grouped Multi Query Attention: Reduces KV cache memory by grouping multiple queries with same keys and values
+- Multi-head Latent Attention: Projects K, V, Q into lower-dimensional latent space, computing attention in latent space then projecting back
+- Cross Layer KV-sharing: Ties KV cache across neighboring attention layers
+- Interleaving Local and Global Attention**: Uses global attention in every 4-6 layers
 
 **Resources**:
-[1][KV Caching Video](https://www.youtube.com/watch?v=Mn_9W1nCFLo&t=3869s)
-[2][FLOPS computation efficiency with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
+[1] [KV Caching Video](https://www.youtube.com/watch?v=Mn_9W1nCFLo&t=3869s)
+[2] [FLOPS computation efficiency with KV cache](https://docs.google.com/presentation/d/14hK7SmkUNfSEIRGyptFD2bGO7K9sJOTnwjAVg3vgg6g/edit?slide=id.g286de50af37_0_933#slide=id.g286de50af37_0_933)
 
 #### 3.2 Stateful Caching
 
@@ -98,9 +97,9 @@ Speculative decoding uses a smaller draft model to generate responses, then uses
 Compressing a model by representing weights/activations with fewer bits instead of standard fp32 (32-bit float).
 
 **Quantization Types**:
-- **min/max**: Simple but susceptible to outliers
-- **MSE**: Minimizes MSE between original and quantized values
-- **Cross-entropy**: Preserves order of largest values after quantization for softmax; argmin(softmax(v), softmax(v’))
+- Min/Max: Simple but susceptible to outliers
+- MSE: Minimizes MSE between original and quantized values
+- Cross-entropy: Preserves order of largest values after quantization for softmax; argmin(softmax(v), softmax(v’))
 
 
 **Post-Training Quantization (PTQ)**: After fully training a model, its weights are converted to lower precision (e.g., int8 or float16) without further training. PTQ is generally inexpensive to implement compared to retraining, but as model sizes scale to billions of parameters, outlier activations of large magnitude can appear in transformer layers, making naive low-bit quantization less effective. To address this, quantization-aware observers are attached to collect statistics (such as mean and standard deviation) on the input data, which are then used to determine quantization parameters.
@@ -109,12 +108,12 @@ Compressing a model by representing weights/activations with fewer bits instead 
 
 **Quantization-Aware Training (QAT)**: Quantization is applied during pre-training or further fine-tuning. Siimulate quantization and dequantization in the forward pass. This simulaes the quantization error and acts as a regualizer to make the model robust to it. Backpropagation: Quantization is not differentiable, so gradients are approximated using the straight-through estimator (STE), which sets the gradient to 1 within the quantization range (alpha, beta) and 0 outside.
 
-
 **Resources**:
 [1] [Quantization Video](https://www.youtube.com/watch?v=0VdNflU08yA)
 [2] [Lilian Weng's Inference Optimization](https://lilianweng.github.io/posts/2023-01-10-inference-optimization/)
 
 ---
+
 ### 4. Training Optimization
 
 Training large models requires sophisticated parallelism strategies. Know the different approaches and their trade-offs.
@@ -144,12 +143,7 @@ At the end of each minibatch, workers need to synchronize gradients or weights t
 
 3. **Parameter Partitioning**: Memory reduction is linear with DP degree. For example, splitting across 64 GPUs will yield a 64x memory reduction. There is a modest 50% increase in communication volume. This works because at any time doing forward or backward, only a subset of parameters (in a layer) are required for the operation. At best you're gonna need memory equivalent to a layer size. The model parameters can be sliced in any manner (vertically or horizontally). The way it's different from tensor parallelism or pipeline parallelism is that every computation still happens on each GPU using full tensors, just that the parameters are not all on single GPU.
 
-**Key Implementations**:
-- **FSDP (Fully Sharded Data Parallel)**: PyTorch's implementation of ZeRO
-- **DeepSpeed**: Microsoft's open-source implementation of ZeRO
-
 **Communication Primitives**:
-
 - **All-Reduce**: Each process starts with its own data and ends up with the sum (or other reduction) of all data across processes. Commonly used for synchronizing gradients. Can be implemented as a combination of reduce-scatter followed by all-gather.  
 - **Ring All-Reduce**: Each GPU sends and receives data in a ring topology, minimizing bandwidth bottlenecks. Communication overhead: 2 × (N-1) × X/N bytes, where N is the number of GPUs and X is the data size.
 - **Reduce-Scatter**: Each process reduces (e.g., sums) a chunk of data across all processes and keeps only its own chunk. Used as the first step in optimized all-reduce.
@@ -284,26 +278,18 @@ Context Parallelism is about how to parallelize the sequence length into multipl
 [2] [Sequence Parallelism](https://arxiv.org/abs/2104.04473)
 
 #### 4.6 Expert Parallelism (MoE)
-
 Instead of every token being processed by the same dense network, we introduce a set of experts (sub-networks, usually feed-forward MLPs inside Transformer blocks). Each token is assigned (via a gating function) to one or a few experts. Experts are sharded across devices (GPUs/TPUs). Each device hosts a subset of experts, and tokens are routed to whichever device hosts their assigned expert.
 
 **Mixture of Experts (MoE)**: Instead of every token being processed by the same dense network, a set of experts (sub-networks, typically feed-forward MLPs) is introduced. A router—usually implemented as a softmax gate—assigns each token to one or more experts based on routing strategies:
-
-- **Top-1 routing** (e.g., Switch Transformer): Each token is sent to the single highest-scoring expert.
-- **Top-k routing** (e.g., GShard, GLaM): Each token is sent to the top k experts, and their outputs are combined.
-
-**Routing Strategies**:
-- **Top-1 routing** (Switch Transformer): Pick the highest scoring expert
-- **Top-k routing** (GShard, GLaM): Pick k experts and combine outputs
+- Top-1 routing (e.g., Switch Transformer): Each token is sent to the single highest-scoring expert.
+- Top-k routing (e.g., GShard, GLaM): Each token is sent to the top k experts, and their outputs are combined.
 
 **Load Balancing Challenges**:
-Some experts (on some GPUs) may get overloaded while others sit idle. This leads to device imbalance → bottlenecked training/inference.
+In practice, load balancing can be a significant challenge in expert parallelism. Some experts, and thus some GPUs, may become overloaded with tokens while others remain underutilized. This imbalance can create bottlenecks during training or inference, reducing overall efficiency.
 
-- **Device Balance Loss**: Add a regularization term ("device balance loss") to the training objective that encourages an even distribution of tokens across devices.
-
-- **Communication Balance Loss**: Additional loss term to balance communication patterns.
-
-- **Auxiliary Free Load Balancing**: Instead of adding a penalty in loss, use architectural or algorithmic tricks to achieve balance automatically:
+- Device Balance Loss: Add a regularization term ("device balance loss") to the training objective that encourages an even distribution of tokens across devices.
+- Communication Balance Loss: Additional loss term to balance communication patterns.
+- Auxiliary Free Load Balancing: Instead of adding a penalty in loss, use architectural or algorithmic tricks to achieve balance automatically:
   - Randomized routing with constraints
   - Capacity-based routing (set a hard cap on tokens per expert)
   - Priority dropping (drop excess tokens if an expert is full)
