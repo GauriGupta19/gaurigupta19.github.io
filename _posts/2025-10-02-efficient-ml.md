@@ -78,7 +78,7 @@ KV caching works by storing the key and value tensors computed for each token as
 - Grouped Multi Query Attention: Reduces KV cache memory by grouping multiple queries with same keys and values
 - Multi-head Latent Attention: Projects K, V, Q into lower-dimensional latent space, computing attention in latent space then projecting back
 - Cross Layer KV-sharing: Ties KV cache across neighboring attention layers
-- Interleaving Local and Global Attention**: Uses global attention in every 4-6 layers
+- Interleaving Local and Global Attention: Uses global attention in every 4-6 layers
 
 **Additional Resources**:
 [1] [KV Caching Video](https://www.youtube.com/watch?v=Mn_9W1nCFLo&t=3869s)
@@ -317,8 +317,7 @@ In practice, load balancing can be a significant challenge in expert parallelism
 ---
 
 ### Conclusion
+Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
 Thanks for dropping by and reading till the end! Hope this was helpful in your journey!
-
-Optimizing large language models requires careful consideration across multiple dimensions. The techniques discussed here represent the current state-of-the-art in LLM optimization, from memory-efficient attention mechanisms to advanced parallelism strategies. As models continue to grow, these optimization techniques become increasingly critical for practical deployment.
 
