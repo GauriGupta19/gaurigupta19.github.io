@@ -1,0 +1,40 @@
+export const publications = [
+  {
+    id: "singh2024codream",
+    title:
+      "CoDream: Exchanging dreams instead of models for federated aggregation with heterogeneous models",
+    authors: [
+      "Gauri Gupta*",
+      "Abhishek Singh*",
+      "Ritvik Kapila",
+      "Yichuan Shi",
+      "Alex Dang",
+      "Sheshank Shankar",
+      "Mohammed Ehab",
+      "Ramesh Raskar",
+    ],
+    venue: "arXiv",
+    date: "2024",
+    links: [
+      { type: "link", name: "Project Page", target: "https://mitmedialab.github.io/codream.github.io/" },
+      { type: "link", name: "Paper", target: "https://arxiv.org/abs/2402.15968" },
+      { type: "link", name: "Code", target: "https://github.com/GauriGupta19/codream" },
+    ],
+    notes: "* Equal Contribution",
+  },
+  {
+    id: "gupta2024first",
+    title:
+      "First 100 days of pandemic; an interplay of pharmaceutical, behavioral and digital interventions--A study using agent based modeling",
+    authors: ["Gauri Gupta", "Ritvik Kapila", "Ayush Chopra", "Ramesh Raskar"],
+    venue: "The 23rd International Conference on Autonomous Agents and Multi-Agent Systems",
+    date: "2024",
+    award: "Oral Presentation",
+    links: [
+      { type: "link", name: "Paper", target: "https://arxiv.org/abs/2401.04795" },
+      { type: "link", name: "Code", target: "https://github.com/mitmedialab/DeepABM-Pandemic/" },
+    ],
+  },
+]
+
+export default publications
