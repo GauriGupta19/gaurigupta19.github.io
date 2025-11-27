@@ -1,3 +1,4 @@
+import React from 'react'
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -37,7 +38,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           strong: ({ ...props }) => (
             <strong className="font-semibold text-foreground" {...props} />
           ),
-          code: ({ className, children, ...props }: any) => {
+          code: ({ className, children, ...props }: { className?: string; children?: React.ReactNode } & React.HTMLAttributes<HTMLElement>) => {
             const isBlock = className?.includes('language-');
             if (isBlock) {
               return <code className={className} {...props}>{children}</code>;

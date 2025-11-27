@@ -1,17 +1,27 @@
-import { Link } from "react-router-dom"
-import ThemeToggle from "./ThemeToggle"
+import { Link } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-sm bg-background/95 border-b border-border/40">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-sm bg-background/95 border-b border-border/40">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo/Brand */}
         <Link
           to="/"
-          className="text-lg font-bold tracking-tight hover:opacity-80 transition-opacity group"
+          className="text-lg font-bold tracking-tight transition-opacity group"
         >
           <span className="inline-block">Gauri Gupta</span>
-          <span className="block text-xs font-normal text-muted-foreground mt-0.5">AI Research & Engineering</span>
+          <span className="block text-xs font-normal text-muted-foreground mt-0.5">
+            Founder @
+            <a
+              href="https://www.neosigma.ai/"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:underline"
+            >
+              NeoSigma
+            </a>{" "}
+          </span>
         </Link>
 
         {/* Navigation Links */}
@@ -45,5 +55,5 @@ export default function Header() {
         </div>
       </nav>
     </header>
-  )
+  );
 }

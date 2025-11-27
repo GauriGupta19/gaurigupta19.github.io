@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import news from "../data/news"
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from "../components/Icons"
 
 export default function NewsPage() {
   return (
