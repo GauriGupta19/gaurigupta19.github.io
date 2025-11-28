@@ -202,38 +202,39 @@ export default function BlogPost() {
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
               All articles
             </Link>
-            <div className="inline-flex items-center gap-3">
-              <button
-                onClick={handleCopyLink}
-                aria-label="Copy link"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md hover:bg-muted/50"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4 text-green-500" />
-                ) : (
+             <DropdownMenu>
+            <div>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50">
+                  <Share2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Share</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent sideOffset={8} className="w-48">
+                <DropdownMenuItem
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-3"
+                >
                   <Copy className="w-4 h-4" />
-                )}
-                <span className="hidden sm:inline">{copied ? "Copied!" : "Copy link"}</span>
-              </button>
-
-              <button
-                onClick={() => handleShare("twitter")}
-                aria-label="Share on Twitter"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md hover:bg-muted/50"
-              >
-                <Twitter className="w-4 h-4" />
-                <span className="hidden sm:inline">Twitter</span>
-              </button>
-
-              <button
-                onClick={() => handleShare("linkedin")}
-                aria-label="Share on LinkedIn"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md hover:bg-muted/50"
-              >
-                <Linkedin className="w-4 h-4" />
-                <span className="hidden sm:inline">LinkedIn</span>
-              </button>
+                  <span>{copied ? "Copied!" : "Copy link"}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleShare("twitter")}
+                  className="flex items-center gap-3"
+                >
+                  <Twitter className="w-4 h-4" />
+                  <span>Share on Twitter</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleShare("linkedin")}
+                  className="flex items-center gap-3"
+                >
+                  <Linkedin className="w-4 h-4" />
+                  <span>Share on LinkedIn</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
             </div>
+          </DropdownMenu>
           </div>
         </footer>
         {/* Transient visual confirmation for copy action */}
