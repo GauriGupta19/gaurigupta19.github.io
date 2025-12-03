@@ -54,11 +54,19 @@ export default function BlogPost() {
       updateMetaTag("og:description", post.excerpt || "");
       updateMetaTag("og:url", window.location.href);
       updateMetaTag("og:type", "article");
+      updateMetaTag("og:site_name", "Gauri Gupta");
+      updateMetaTag("og:image", window.location.origin + "/assets/images/profile.webp");
+      updateMetaTag("og:image:width", "1200");
+      updateMetaTag("og:image:height", "630");
+      updateMetaTag("og:image:alt", post.title);
 
       // Twitter Card tags
       updateNameMetaTag("twitter:card", "summary_large_image");
       updateNameMetaTag("twitter:title", post.title);
       updateNameMetaTag("twitter:description", post.excerpt || "");
+      updateNameMetaTag("twitter:image", window.location.origin + "/assets/images/profile.webp");
+      updateNameMetaTag("twitter:image:alt", post.title);
+      updateNameMetaTag("twitter:creator", "@gauri__gupta");
 
       // Generic description
       updateNameMetaTag("description", post.excerpt || "");
@@ -75,23 +83,14 @@ export default function BlogPost() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleShare = (
-    platform: "twitter" | "linkedin" | "facebook" | "whatsapp" | "reddit"
-  ) => {
+  const handleShare = (platform: "twitter" | "linkedin") => {
     const pageUrl = window.location.href;
     const url = encodeURIComponent(pageUrl);
     const title = encodeURIComponent(post?.title || "");
 
     const shareUrls: Record<string, string> = {
       twitter: `https://x.com/intent/tweet?url=${url}&text=${title}`,
-      // LinkedIn with proper parameters
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
-      // Facebook sharer
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-      // WhatsApp
-      whatsapp: `https://api.whatsapp.com/send?text=${title}%20${url}`,
-      // Reddit
-      reddit: `https://reddit.com/submit?url=${url}&title=${title}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`,
     };
 
     const shareUrl = shareUrls[platform];
