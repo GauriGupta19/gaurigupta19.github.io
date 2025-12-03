@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "prerender:posts": "node scripts/prerender-posts.cjs",
+    "fetch-x-bookmarks": "node scripts/fetch-x-bookmarks.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepare": "husky"

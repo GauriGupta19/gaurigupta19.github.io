@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Ruby dependencies (not used in this project)
+vendor/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
