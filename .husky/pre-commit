@@ -1,0 +1,17 @@
+echo "Running ESLint..."
+npm run lint
+
+if [ $? -ne 0 ]; then
+  echo "ESLint failed. Please fix the errors before committing."
+  exit 1
+fi
+
+echo "Running TypeScript build check..."
+npm run build
+
+if [ $? -ne 0 ]; then
+  echo "Build failed. Please fix the errors before committing."
+  exit 1
+fi
+
+echo "All checks passed!"

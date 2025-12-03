@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #fafafa;
+  --secondary-foreground: #111111;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #f0f0f0;
+  --accent-foreground: #111111;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #a3a3a3;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0a;
+  --secondary: #171717;
+  --secondary-foreground: #ededed;
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+  --accent: #262626;
+  --accent-foreground: #ededed;
+  --destructive: #ef4444;
+  --destructive-foreground: #ededed;
+  --border: #262626;
+  --input: #262626;
+  --ring: #525252;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Added custom animation timing */
+  --animate-fade-in: fade-in 0.4s ease-out forwards;
+  --animate-slide-up: slide-up 0.5s ease-out forwards;
+}
+
+/* Added keyframes for subtle animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-foreground text-background;
+  }
+}
+
+@layer utilities {
+  /* Animation utility classes */
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* Content links */
+  .content-link {
+    @apply text-foreground underline decoration-muted-foreground/40 underline-offset-[3px]
+           hover:decoration-foreground transition-all duration-200;
+  }
+
+  /* Added styling for links inside news items (uses dangerouslySetInnerHTML) */
+  .news-content a {
+    @apply text-foreground underline decoration-muted-foreground/40 underline-offset-[3px]
+           hover:decoration-foreground transition-all duration-200;
+  }
+
+  /* Markdown prose styling */
+  .prose {
+    @apply text-foreground/90 leading-[1.8];
+  }
+
+  .prose h2 {
+    @apply text-xl font-semibold text-foreground mt-12 mb-4 tracking-tight;
+  }
+
+  .prose h3 {
+    @apply text-lg font-semibold text-foreground mt-10 mb-3 tracking-tight;
+  }
+
+  .prose h4 {
+    @apply text-base font-medium text-foreground mt-8 mb-2;
+  }
+
+  .prose p {
+    @apply mb-5 text-foreground/85 leading-[1.8];
+  }
+
+  .prose strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .prose a {
+    @apply text-foreground underline decoration-muted-foreground/40 underline-offset-[3px]
+           hover:decoration-foreground transition-all duration-200;
+  }
+
+  /* List styling */
+  .prose ul {
+    @apply my-5 pl-5 space-y-1.5;
+    list-style-type: disc;
+    list-style-position: outside;
+  }
+
+  .prose ul li {
+    @apply text-foreground/85 leading-[1.8] pl-1;
+  }
+
+  .prose ul li::marker {
+    @apply text-muted-foreground;
+  }
+
+  /* Nested lists */
+  .prose ul ul {
+    @apply mt-1.5 mb-0;
+    list-style-type: circle;
+  }
+
+  .prose ol {
+    @apply my-5 pl-5 space-y-1.5;
+    list-style-type: decimal;
+    list-style-position: outside;
+  }
+
+  .prose ol li {
+    @apply text-foreground/85 leading-[1.8] pl-1;
+  }
+
+  .prose ol li::marker {
+    @apply text-muted-foreground font-medium;
+  }
+
+  .prose code {
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground;
+  }
+
+  .prose pre {
+    @apply bg-muted p-4 rounded-lg overflow-x-auto my-6 border border-border;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+
+  .prose blockquote {
+    @apply border-l-2 border-border pl-4 my-6 text-muted-foreground italic;
+  }
+
+  .prose hr {
+    @apply my-10 border-border;
+  }
+}
