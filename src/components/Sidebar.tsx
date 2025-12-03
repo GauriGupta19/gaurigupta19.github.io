@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import {
   MapPin,
   Mail,
-  Github,
   Twitter,
   Linkedin,
   GraduationCap,
@@ -14,8 +13,8 @@ export default function Sidebar() {
   const socialLinks = [
     { icon: MapPin, label: "San Francisco, CA", href: null },
     { icon: Mail, label: "Email", href: "mailto:gaurigupta.iitd@gmail.com" },
-    { icon: Github, label: "GitHub", href: "https://github.com/gaurigupta19" },
-    { icon: Twitter, label: "X (Twitter)", href: "https://x.com/gauri__gupta" },
+    // { icon: Github, label: "GitHub", href: "https://github.com/gaurigupta19" },
+    { icon: Twitter, label: "X", href: "https://x.com/gauri__gupta" },
     {
       icon: Linkedin,
       label: "LinkedIn",

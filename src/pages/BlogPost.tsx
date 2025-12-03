@@ -83,7 +83,7 @@ export default function BlogPost() {
     const title = encodeURIComponent(post?.title || "");
 
     const shareUrls: Record<string, string> = {
-      twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
+      twitter: `https://x.com/intent/tweet?url=${url}&text=${title}`,
       // LinkedIn with proper parameters
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
       // Facebook sharer
@@ -152,7 +152,7 @@ export default function BlogPost() {
                   className="flex items-center gap-3"
                 >
                   <Twitter className="w-4 h-4" />
-                  <span>Share on Twitter</span>
+                  <span>Share on X</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleShare("linkedin")}
@@ -223,7 +223,7 @@ export default function BlogPost() {
                   className="flex items-center gap-3"
                 >
                   <Twitter className="w-4 h-4" />
-                  <span>Share on Twitter</span>
+                  <span>Share on X</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleShare("linkedin")}
