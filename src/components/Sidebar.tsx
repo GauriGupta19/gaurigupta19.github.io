@@ -30,7 +30,71 @@ export default function Sidebar() {
 
   return (
     <aside className="w-full md:w-72 shrink-0">
-      <div className="flex flex-col gap-8">
+      {/* Mobile Layout - Horizontal */}
+      <div className="md:hidden flex flex-col gap-6">
+        <div className="flex flex-col sm:flex-row gap-6 items-start">
+          {/* Profile Image */}
+          <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg overflow-hidden bg-muted shrink-0 mx-auto sm:mx-0">
+            <img
+              src="/assets/images/profile.webp"
+              alt="Gauri Gupta"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+
+          {/* Name & Bio */}
+          <div className="flex-1 text-center sm:text-left">
+            <h3 className="text-xl sm:text-2xl font-semibold mb-2">Gauri Gupta</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="block text-sm font-normal text-muted-foreground mt-0.5">
+                Founder @
+                <a
+                  href="https://www.neosigma.ai/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:underline"
+                >
+                  NeoSigma
+                </a>{" "}
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Social Links - Compact Grid for Mobile */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+          {socialLinks.map((link) => {
+            const Icon = link.icon;
+            if (!link.href) {
+              return (
+                <div
+                  key={link.label}
+                  className="flex items-center gap-2 text-sm touch-manipulation"
+                >
+                  <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <span className="text-muted-foreground truncate">{link.label}</span>
+                </div>
+              );
+            }
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noreferrer"
+                className="flex items-center gap-2 text-sm hover:text-primary transition-colors group touch-manipulation min-h-[44px]"
+              >
+                <Icon className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="truncate">{link.label}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Desktop Layout - Vertical */}
+      <div className="hidden md:flex md:flex-col gap-8">
         {/* Profile Image */}
         <div className="h-64 w-64 rounded-lg overflow-hidden bg-muted">
           <img
@@ -90,7 +154,7 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation Links (visible on md+ where sidebar is shown) */}
-        <div className="hidden md:flex md:flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <Link
             to="/blogs"
             className="flex items-center gap-2 text-sm hover:text-primary transition-colors font-medium"

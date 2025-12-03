@@ -105,6 +105,16 @@
   ::selection {
     @apply bg-foreground text-background;
   }
+
+  /* Smooth scrolling for mobile */
+  html {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better tap highlighting */
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer utilities {
@@ -116,6 +126,27 @@
   .animate-slide-up {
     animation: slide-up 0.5s ease-out forwards;
     opacity: 0;
+  }
+
+  /* Mobile-specific utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Line clamp utilities for mobile */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
@@ -138,19 +169,19 @@
   }
 
   .prose h2 {
-    @apply text-xl font-semibold text-foreground mt-12 mb-4 tracking-tight;
+    @apply text-xl sm:text-2xl font-semibold text-foreground mt-8 sm:mt-12 mb-3 sm:mb-4 tracking-tight;
   }
 
   .prose h3 {
-    @apply text-lg font-semibold text-foreground mt-10 mb-3 tracking-tight;
+    @apply text-lg sm:text-xl font-semibold text-foreground mt-6 sm:mt-10 mb-2 sm:mb-3 tracking-tight;
   }
 
   .prose h4 {
-    @apply text-base font-medium text-foreground mt-8 mb-2;
+    @apply text-base sm:text-lg font-medium text-foreground mt-6 sm:mt-8 mb-2;
   }
 
   .prose p {
-    @apply mb-5 text-foreground/85 leading-[1.8];
+    @apply mb-4 sm:mb-5 text-[15px] sm:text-base text-foreground/85 leading-[1.75] sm:leading-[1.8];
   }
 
   .prose strong {
@@ -164,13 +195,13 @@
 
   /* List styling */
   .prose ul {
-    @apply my-5 pl-5 space-y-1.5;
+    @apply my-4 sm:my-5 pl-5 space-y-1.5;
     list-style-type: disc;
     list-style-position: outside;
   }
 
   .prose ul li {
-    @apply text-foreground/85 leading-[1.8] pl-1;
+    @apply text-[15px] sm:text-base text-foreground/85 leading-[1.75] sm:leading-[1.8] pl-1;
   }
 
   .prose ul li::marker {
@@ -184,13 +215,13 @@
   }
 
   .prose ol {
-    @apply my-5 pl-5 space-y-1.5;
+    @apply my-4 sm:my-5 pl-5 space-y-1.5;
     list-style-type: decimal;
     list-style-position: outside;
   }
 
   .prose ol li {
-    @apply text-foreground/85 leading-[1.8] pl-1;
+    @apply text-[15px] sm:text-base text-foreground/85 leading-[1.75] sm:leading-[1.8] pl-1;
   }
 
   .prose ol li::marker {
@@ -198,22 +229,22 @@
   }
 
   .prose code {
-    @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground;
+    @apply bg-muted px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono text-foreground;
   }
 
   .prose pre {
-    @apply bg-muted p-4 rounded-lg overflow-x-auto my-6 border border-border;
+    @apply bg-muted p-3 sm:p-4 rounded-lg overflow-x-auto my-4 sm:my-6 border border-border;
   }
 
   .prose pre code {
-    @apply bg-transparent p-0 text-sm;
+    @apply bg-transparent p-0 text-xs sm:text-sm;
   }
 
   .prose blockquote {
-    @apply border-l-2 border-border pl-4 my-6 text-muted-foreground italic;
+    @apply border-l-2 border-border pl-3 sm:pl-4 my-4 sm:my-6 text-sm sm:text-base text-muted-foreground italic;
   }
 
   .prose hr {
-    @apply my-10 border-border;
+    @apply my-8 sm:my-10 border-border;
   }
 }
