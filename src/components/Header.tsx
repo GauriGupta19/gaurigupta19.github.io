@@ -1,16 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { Menu, X } from "./Icons";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
 
-  // Close mobile menu on route change
-  useEffect(() => {
+  const handleLinkClick = () => {
     setMobileMenuOpen(false);
-  }, [location]);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-sm bg-background/95 border-b border-border/40">
@@ -18,7 +16,7 @@ export default function Header() {
         {/* Logo/Brand */}
         <Link
           to="/"
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={handleLinkClick}
           className="text-base sm:text-lg font-bold tracking-tight transition-opacity group"
         >
           <span className="inline-block">Gauri Gupta</span>
@@ -88,21 +86,21 @@ export default function Header() {
           <div className="px-4 py-4 space-y-1">
             <Link
               to="/"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={handleLinkClick}
               className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
             >
               Home
             </Link>
             <Link
               to="/blogs"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={handleLinkClick}
               className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
             >
               Blogs
             </Link>
             <Link
               to="/news"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={handleLinkClick}
               className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
             >
               News

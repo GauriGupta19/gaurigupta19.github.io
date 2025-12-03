@@ -138,7 +138,7 @@ export default function Home() {
                 </h2>
                 <button
                   onClick={() => setShowAll((s) => !s)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation min-h-[44px] px-3 -mr-3"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation min-h-11 px-3 -mr-3"
                 >
                   {showAll ? "Show less" : "Show more"}
                 </button>

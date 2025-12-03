@@ -124,7 +124,7 @@ export default function BlogPost() {
         <div className="flex items-center justify-between mb-8 sm:mb-12 animate-slide-up">
           <Link
             to="/blogs"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-[44px]"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-11"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
             Blogs
@@ -134,7 +134,7 @@ export default function BlogPost() {
           <DropdownMenu>
             <div>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-[44px] sm:min-h-0">
+                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-11 sm:min-h-0">
                   <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Share</span>
                 </button>
@@ -197,7 +197,7 @@ export default function BlogPost() {
           <div className="flex items-center justify-between">
             <Link
               to="/blogs"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-[44px]"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-11"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
               All articles
@@ -205,7 +205,7 @@ export default function BlogPost() {
              <DropdownMenu>
             <div>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-[44px] sm:min-h-0">
+                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-11 sm:min-h-0">
                   <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Share</span>
                 </button>

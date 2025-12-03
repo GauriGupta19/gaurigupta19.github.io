@@ -82,7 +82,7 @@ export default function Sidebar() {
                 href={link.href}
                 target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel="noreferrer"
-                className="flex items-center gap-2 text-sm hover:text-primary transition-colors group touch-manipulation min-h-[44px]"
+                className="flex items-center gap-2 text-sm hover:text-primary transition-colors group touch-manipulation min-h-11"
               >
                 <Icon className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
                 <span className="truncate">{link.label}</span>
