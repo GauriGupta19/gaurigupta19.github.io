@@ -1,0 +1,9 @@
+echo " Running build before push..."
+npm run build
+
+if [ $? -ne 0 ]; then
+  echo "Build failed. Cannot push."
+  exit 1
+fi
+
+echo "Build successful! Pushing..."
