@@ -4,6 +4,7 @@ import Header from "./components/Header"
 import Home from "./pages/Home"
 import Blogs from "./pages/Blogs"
 import BlogPost from "./pages/BlogPost"
+import BlogRedirect from "./pages/BlogRedirect"
 import NewsPage from "./pages/News"
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
               <Route path="/blogs" element={<Blogs />} />
               <Route path="/blogs/:id" element={<BlogPost />} />
               <Route path="/news" element={<NewsPage />} />
+              {/* Legacy blog URL redirects - catches old-style URLs */}
+              <Route path="/llms/*" element={<BlogRedirect />} />
             </Routes>
           </main>
         </BrowserRouter>
