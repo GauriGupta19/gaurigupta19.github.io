@@ -35,6 +35,7 @@ jobs:
           X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN || secrets.X_BEARER_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           # Trim whitespace/newlines from secrets (often pasted with trailing newline)
           X_REFRESH_TOKEN=$(printf '%s' "$X_REFRESH_TOKEN" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -45,7 +46,6 @@ jobs:
           if [ -n "$X_REFRESH_TOKEN" ] && [ -n "$X_CLIENT_ID" ] && [ -n "$X_CLIENT_SECRET" ]; then
             echo "Refreshing X access token..."
             basic=$(printf '%s' "${X_CLIENT_ID}:${X_CLIENT_SECRET}" | base64 -w 0)
-            # Pass refresh_token via file to avoid curl (43) / shell escaping with special chars
             printf '%s' "$X_REFRESH_TOKEN" > /tmp/refresh_token.txt
             resp=$(curl -sS -X POST 'https://api.x.com/2/oauth2/token' \
               -H "Authorization: Basic $basic" \
@@ -55,9 +55,17 @@ jobs:
             token=$(echo "$resp" | jq -r '.access_token // empty')
             if [ -z "$token" ]; then
               echo "::error::Failed to refresh token: $resp"
+              echo "::error::If you see 'Value passed for the token was invalid', X rotates refresh tokens: get a new one by re-running the OAuth flow and update the X_REFRESH_TOKEN secret."
               exit 1
             fi
             echo "access_token=$token" >> $GITHUB_OUTPUT
+            # X returns a new refresh_token each time; save it so the next run works (avoids "token was invalid")
+            new_refresh=$(echo "$resp" | jq -r '.refresh_token // empty')
+            if [ -n "$new_refresh" ] && [ -n "$GH_PAT" ]; then
+              echo "Updating X_REFRESH_TOKEN secret with rotated token..."
+              export GH_TOKEN="$GH_PAT"
+              printf '%s' "$new_refresh" | gh secret set X_REFRESH_TOKEN --repo "$GITHUB_REPOSITORY" --body-file -
+            fi
           else
             echo "access_token=$X_ACCESS_TOKEN" >> $GITHUB_OUTPUT
           fi
