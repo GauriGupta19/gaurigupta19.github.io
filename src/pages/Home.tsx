@@ -29,9 +29,7 @@ export default function Home() {
               </h2>
               <div className="space-y-5 text-foreground/90 leading-[1.8]">
                 <p>
-                  Hi! I am currently building my company researching
-                  post-training data for advancing model capabilities. We are
-                  currently in stealth mode and will share more soon.
+                  Hi! I am currently building my company NeoSigma(curently in stealth and will share more soon!).
                 </p>
                 <p>
                   Before that, most recently I was at{" "}
