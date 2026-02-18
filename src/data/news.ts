@@ -1,5 +1,25 @@
 export const news = [
   {
+    date: "January 2026",
+    content: "Bookmarked from <a href='https://x.com/daniel_c0deb0t/status/2013887878061793619' target='_blank' rel='noreferrer'>@daniel_c0deb0t</a>: The original Anthropic performance take home assignment (which I took) is now on github: https://t.co/FFmLRxLbuv",
+  },
+  {
+    date: "November 2025",
+    content: "Bookmarked from <a href='https://x.com/gauri__gupta/status/1991824700910235973' target='_blank' rel='noreferrer'>@gauri__gupta</a>: Honored to be invited to the OpenAI Founders Table dinner. Incredible night with great people and amazing conversations. Excited for what we are building @NeoSigmaAI https://t.co/faoyoXjXPd",
+  },
+  {
+    date: "December 2025",
+    content: "Bookmarked from <a href='https://x.com/karthik_r_n/status/1996251372937720015' target='_blank' rel='noreferrer'>@karthik_r_n</a>: There seems to be increasing interest in τ-bench these days (esp. with all the frontier labs evaluating on it) so I wanted to share some quick thoughts of my own: 1. User simulation: The quality of user simulation is critical to these tasks, probably the trickiest part imo (see https://t.co/auTPTALp5v",
+  },
+  {
+    date: "November 2025",
+    content: "Bookmarked from <a href='https://x.com/gauri__gupta/status/1994928193527320725' target='_blank' rel='noreferrer'>@gauri__gupta</a>: Last month I had the privilege of presenting at the MIT AI Conference alongside incredible leaders and researchers. I shared what we are building at @NeoSigmaAI on curating intelligence in the post-web era. Whether we are in the age of scaling or the age of research, we’re https://t.co/GSJSA3wgUx",
+  },
+  {
+    date: "November 2025",
+    content: "Bookmarked from <a href='https://x.com/SeanZCai/status/1990838752898658688' target='_blank' rel='noreferrer'>@SeanZCai</a>: The TAM for AI isn’t “software.” It’s all of human labour. The real gold rush is RL environments + human-data infra where models actually learn to work, not chatbots in your feed. Most white-collar automation isn’t a “capability” problem. It’s a verifiability problem. RL is",
+  },
+{
     date: "October 2025",
     content:
       "Invited for a talk at <a href='https://www.mitaiconference.org/' target='_blank' rel='noreferrer'>MIT AI Conference</a>.",
@@ -47,7 +67,7 @@ export const news = [
     date: "August 2019",
     content:
       "Awarded with Charpak Lab Research Fellowship, among top 20 students selected across globe for research in France.",
-  },
+  }
 ];
 
 export default news;

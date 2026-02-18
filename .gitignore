@@ -30,3 +30,6 @@ vendor/
 
 # OAuth PKCE (do not commit)
 .oauth_pkce.txt
+
+# Local env for testing (same as GitHub secrets)
+.env.local
