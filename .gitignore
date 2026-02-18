@@ -27,3 +27,6 @@ vendor/
 *.sw?
 
 .DS_Store
+
+# OAuth PKCE (do not commit)
+.oauth_pkce.txt

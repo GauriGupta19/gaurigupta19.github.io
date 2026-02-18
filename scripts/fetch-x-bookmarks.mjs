@@ -30,30 +30,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Get environment variables
-const bearerToken = process.env.X_BEARER_TOKEN;
+const accessToken = process.env.X_ACCESS_TOKEN || process.env.X_BEARER_TOKEN;
 const username = process.env.X_USERNAME || "gauri__gupta";
 const maxResults = parseInt(process.env.MAX_BOOKMARKS || "5", 10);
 
-if (!bearerToken) {
-  console.error("Error: X_BEARER_TOKEN environment variable is required");
-  console.error("\nTo get a bearer token:");
-  console.error("1. Go to https://developer.twitter.com/en/portal/dashboard");
-  console.error("2. Create a new app or use an existing one");
-  console.error("3. Generate a Bearer Token");
+if (!accessToken) {
+  console.error(
+    "Error: X_ACCESS_TOKEN (or X_BEARER_TOKEN) environment variable is required"
+  );
+  console.error(
+    "\nFor bookmarks, this must be an OAuth2 *user* access token (Authorization Code with PKCE), not an app-only token."
+  );
+  console.error("\nRequired scopes:");
+  console.error("  - tweet.read");
+  console.error("  - users.read");
+  console.error("  - bookmark.read");
   console.error("\nUsage:");
-  console.error("  X_BEARER_TOKEN=your_token X_USERNAME=your_username npm run fetch-x-bookmarks");
+  console.error(
+    "  X_ACCESS_TOKEN=your_user_token X_USERNAME=your_username npm run fetch-x-bookmarks"
+  );
   process.exit(1);
 }
 
 /**
  * Get user ID from username
  */
-async function getUserIdFromUsername(bearerToken, username) {
+async function getUserIdFromUsername(accessToken, username) {
   const url = `https://api.x.com/2/users/by/username/${username}?user.fields=id`;
   const response = await fetch(url, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
   });
@@ -72,7 +79,7 @@ async function getUserIdFromUsername(bearerToken, username) {
 /**
  * Fetch X bookmarks for a user
  */
-async function fetchXBookmarks(bearerToken, userId, maxResults = 10) {
+async function fetchXBookmarks(accessToken, userId, maxResults = 10) {
   const url = new URL(`https://api.x.com/2/users/${userId}/bookmarks`);
   url.searchParams.append("max_results", maxResults.toString());
   url.searchParams.append(
@@ -85,15 +92,19 @@ async function fetchXBookmarks(bearerToken, userId, maxResults = 10) {
   const response = await fetch(url.toString(), {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    const hint =
+      response.status === 401 || response.status === 403
+        ? "\nHint: The bookmarks endpoint requires an OAuth2 *user* access token with scopes tweet.read, users.read, bookmark.read. App-only bearer tokens will fail."
+        : "";
     throw new Error(
-      `Failed to fetch X bookmarks: ${response.status} ${JSON.stringify(error)}`
+      `Failed to fetch X bookmarks: ${response.status} ${JSON.stringify(error)}${hint}`
     );
   }
 
@@ -147,11 +158,11 @@ async function main() {
     console.log(`Fetching X bookmarks for @${username}...`);
 
     // Get user ID
-    const userId = await getUserIdFromUsername(bearerToken, username);
+    const userId = await getUserIdFromUsername(accessToken, username);
     console.log(`Found user ID: ${userId}`);
 
     // Fetch bookmarks
-    const response = await fetchXBookmarks(bearerToken, userId, maxResults);
+    const response = await fetchXBookmarks(accessToken, userId, maxResults);
     console.log(`Fetched ${response.data.length} bookmarks`);
 
     if (response.data.length === 0) {
