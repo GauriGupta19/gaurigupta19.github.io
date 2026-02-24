@@ -366,16 +366,13 @@ async function main() {
     ).join('\n');
     
     const newPostObjects = newPosts.map(post => {
-      const escapedTitle = post.title.replace(/['`]/g, "\\$&").replace(/\n/g, " ");
-      const escapedAuthor = post.author.replace(/['`]/g, "\\$&");
-      const escapedExcerpt = post.excerpt.replace(/['`]/g, "\\$&").replace(/\n/g, " ");
       return `  {
     id: '${post.id}',
-    title: '${escapedTitle}',
+    title: ${JSON.stringify(post.title)},
     date: '${post.date}',
-    author: '${escapedAuthor}',
+    author: ${JSON.stringify(post.author)},
     categories: ${JSON.stringify(post.categories)},
-    excerpt: '${escapedExcerpt}',
+    excerpt: ${JSON.stringify(post.excerpt.replace(/\r?\n|\r/g, " "))},
     content: ${post.id.replace(/-/g, '_')}Md,
   }`;
     }).join(',\n');
@@ -387,8 +384,9 @@ async function main() {
     const arrayMatch = restOfContent.match(/const posts = \[([\s\S]*?)\];/);
     if (arrayMatch) {
       const existingPostsStr = arrayMatch[1].trim();
-      const updatedPosts = existingPostsStr
-        ? `${existingPostsStr},\n${newPostObjects}`
+      const cleanExisting = existingPostsStr.replace(/,$/, '');
+      const updatedPosts = cleanExisting
+        ? `${cleanExisting},\n${newPostObjects}`
         : newPostObjects;
       
       const newContent = `${existingImports}${newImports}\n\n${restOfContent.replace(
