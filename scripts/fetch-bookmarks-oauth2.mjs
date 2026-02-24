@@ -16,16 +16,16 @@ config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-let X_OAUTH2_ACCESS_TOKEN = process.env.X_OAUTH2_ACCESS_TOKEN;
-const X_OAUTH2_REFRESH_TOKEN = process.env.X_OAUTH2_REFRESH_TOKEN;
+let X_ACCESS_TOKEN = process.env.X_ACCESS_TOKEN;
+const X_REFRESH_TOKEN = process.env.X_REFRESH_TOKEN;
 const X_CLIENT_ID = process.env.X_CLIENT_ID;
 const X_CLIENT_SECRET = process.env.X_CLIENT_SECRET;
 const X_USERNAME = process.env.X_USERNAME || 'Abhiram2k03';
 const MAX_BOOKMARKS = parseInt(process.env.MAX_BOOKMARKS || '10');
 const DEBUG = process.env.DEBUG === 'true';
 
-if (!X_OAUTH2_ACCESS_TOKEN || !X_OAUTH2_REFRESH_TOKEN) {
-  console.error('❌ Error: X_OAUTH2_ACCESS_TOKEN or X_OAUTH2_REFRESH_TOKEN is not set');
+if (!X_ACCESS_TOKEN || !X_REFRESH_TOKEN) {
+  console.error('❌ Error: X_ACCESS_TOKEN or X_REFRESH_TOKEN is not set');
   console.error('\nPlease run: npm run get-oauth2-token');
   console.error('Then add both tokens to your .env file');
   process.exit(1);
@@ -48,8 +48,8 @@ if (DEBUG) {
   console.log('Environment Configuration:');
   console.log('  X_USERNAME:', X_USERNAME);
   console.log('  MAX_BOOKMARKS:', MAX_BOOKMARKS);
-  console.log('  X_OAUTH2_ACCESS_TOKEN:', X_OAUTH2_ACCESS_TOKEN ? `Set (${X_OAUTH2_ACCESS_TOKEN.length} chars)` : 'NOT SET');
-  console.log('  X_OAUTH2_REFRESH_TOKEN:', X_OAUTH2_REFRESH_TOKEN ? `Set (${X_OAUTH2_REFRESH_TOKEN.length} chars)` : 'NOT SET');
+  console.log('  X_ACCESS_TOKEN:', X_ACCESS_TOKEN ? `Set (${X_ACCESS_TOKEN.length} chars)` : 'NOT SET');
+  console.log('  X_REFRESH_TOKEN:', X_REFRESH_TOKEN ? `Set (${X_REFRESH_TOKEN.length} chars)` : 'NOT SET');
   console.log('  Working Directory:', process.cwd());
   console.log('═══════════════════════════════════════\n');
 }
@@ -61,7 +61,7 @@ async function refreshAccessToken() {
   console.log('🔄 Refreshing access token...');
   
   const params = new URLSearchParams({
-    refresh_token: X_OAUTH2_REFRESH_TOKEN,
+    refresh_token: X_REFRESH_TOKEN,
     grant_type: 'refresh_token',
   });
 
@@ -84,14 +84,14 @@ async function refreshAccessToken() {
     }
 
     const data = await response.json();
-    X_OAUTH2_ACCESS_TOKEN = data.access_token;
+    X_ACCESS_TOKEN = data.access_token;
     
     console.log('✅ Access token refreshed successfully');
     console.log('ℹ️  New token expires in:', data.expires_in, 'seconds');
     console.log('\n⚠️  Update your .env file with the new tokens:');
-    console.log(`X_OAUTH2_ACCESS_TOKEN=${data.access_token}`);
+    console.log(`X_ACCESS_TOKEN=${data.access_token}`);
     if (data.refresh_token) {
-      console.log(`X_OAUTH2_REFRESH_TOKEN=${data.refresh_token}`);
+      console.log(`X_REFRESH_TOKEN=${data.refresh_token}`);
     }
     
     // Write tokens to GitHub Actions output if available
@@ -127,13 +127,13 @@ async function fetchWithTokenRefresh(url, options = {}) {
     });
   };
 
-  let response = await makeRequest(X_OAUTH2_ACCESS_TOKEN);
+  let response = await makeRequest(X_ACCESS_TOKEN);
 
   // If we get a 401, try refreshing the token once
   if (response.status === 401) {
     console.log('⚠️  Access token expired, refreshing...');
     await refreshAccessToken();
-    response = await makeRequest(X_OAUTH2_ACCESS_TOKEN);
+    response = await makeRequest(X_ACCESS_TOKEN);
   }
 
   return response;

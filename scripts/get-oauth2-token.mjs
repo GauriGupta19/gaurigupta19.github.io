@@ -110,8 +110,8 @@ const server = createServer(async (req, res) => {
       console.log('\n✅ Authorization successful!\n');
       console.log('═══════════════════════════════════════\n');
       console.log('Add these to your .env file:\n');
-      console.log(`X_OAUTH2_ACCESS_TOKEN=${tokens.access_token}`);
-      console.log(`X_OAUTH2_REFRESH_TOKEN=${tokens.refresh_token}`);
+      console.log(`X_ACCESS_TOKEN=${tokens.access_token}`);
+      console.log(`X_REFRESH_TOKEN=${tokens.refresh_token}`);
       console.log('\n═══════════════════════════════════════\n');
       console.log('Token expires in:', tokens.expires_in, 'seconds');
       console.log('\nUse the refresh token to get a new access token when it expires.\n');

@@ -49,15 +49,15 @@ jobs:
           echo "Checking environment variables..."
           echo "X_USERNAME: ${{ secrets.X_USERNAME || 'Abhiram2k03' }}"
           echo "MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}"
-          if [ -z "${{ secrets.X_OAUTH2_ACCESS_TOKEN }}" ]; then
-            echo "⚠️ Warning: X_OAUTH2_ACCESS_TOKEN is not set!"
+          if [ -z "${{ secrets.X_ACCESS_TOKEN }}" ]; then
+            echo "⚠️ Warning: X_ACCESS_TOKEN is not set!"
           else
-            echo "✅ X_OAUTH2_ACCESS_TOKEN is set"
+            echo "✅ X_ACCESS_TOKEN is set"
           fi
-          if [ -z "${{ secrets.X_OAUTH2_REFRESH_TOKEN }}" ]; then
-            echo "⚠️ Warning: X_OAUTH2_REFRESH_TOKEN is not set!"
+          if [ -z "${{ secrets.X_REFRESH_TOKEN }}" ]; then
+            echo "⚠️ Warning: X_REFRESH_TOKEN is not set!"
           else
-            echo "✅ X_OAUTH2_REFRESH_TOKEN is set"
+            echo "✅ X_REFRESH_TOKEN is set"
           fi
           if [ -z "${{ secrets.X_CLIENT_ID }}" ]; then
             echo "⚠️ Warning: X_CLIENT_ID is not set!"
@@ -73,8 +73,8 @@ jobs:
       - name: Fetch X bookmarks
         id: fetch-bookmarks
         env:
-          X_OAUTH2_ACCESS_TOKEN: ${{ secrets.X_OAUTH2_ACCESS_TOKEN }}
-          X_OAUTH2_REFRESH_TOKEN: ${{ secrets.X_OAUTH2_REFRESH_TOKEN }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
           X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
           X_USERNAME: ${{ secrets.X_USERNAME || 'Abhiram2k03' }}
@@ -100,8 +100,8 @@ jobs:
           echo "Updating Repository Secrets..."
           
           # Use GitHub CLI to set the secrets
-          echo "${{ steps.fetch-bookmarks.outputs.access_token }}" | gh secret set X_OAUTH2_ACCESS_TOKEN -R $GITHUB_REPOSITORY
-          echo "${{ steps.fetch-bookmarks.outputs.refresh_token }}" | gh secret set X_OAUTH2_REFRESH_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.fetch-bookmarks.outputs.access_token }}" | gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.fetch-bookmarks.outputs.refresh_token }}" | gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY
           
           echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
 
