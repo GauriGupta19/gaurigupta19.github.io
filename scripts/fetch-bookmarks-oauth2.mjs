@@ -255,17 +255,8 @@ function bookmarkToMarkdown(bookmark) {
   
   // Get title from first line, limit to 100 chars
   const title = text.split('\n')[0].substring(0, 100);
-  
-  const metrics = bookmark.public_metrics;
-  const metricsText = metrics ? `
 
-**Metrics:**
-* Likes: ${metrics.like_count || 0}
-* Reposts: ${metrics.retweet_count || 0}
-* Replies: ${metrics.reply_count || 0}
-* Quotes: ${metrics.quote_count || 0}` : '';
-
-  const mediaText = bookmark.media && bookmark.media.length > 0 ? `\n\n**Media:**\n\n` + bookmark.media.map(m => {
+  const mediaText = bookmark.media && bookmark.media.length > 0 ? `\n\n` + bookmark.media.map(m => {
     if (m.type === 'photo') {
       return `![Image](${m.url})`;
     } else if (m.type === 'video' || m.type === 'animated_gif') {
@@ -278,7 +269,7 @@ function bookmarkToMarkdown(bookmark) {
 
 **Originally posted by [@${username}](https://x.com/${username})** on ${formattedDate}
 
-[View original tweet](${bookmark.url})${metricsText}
+[View original post on X](${bookmark.url})
 
 ---
 
@@ -374,15 +365,20 @@ async function main() {
       `import ${post.id.replace(/-/g, '_')}Md from '../pages/posts/${post.id}.md?raw';`
     ).join('\n');
     
-    const newPostObjects = newPosts.map(post => `  {
+    const newPostObjects = newPosts.map(post => {
+      const escapedTitle = post.title.replace(/['`]/g, "\\$&").replace(/\n/g, " ");
+      const escapedAuthor = post.author.replace(/['`]/g, "\\$&");
+      const escapedExcerpt = post.excerpt.replace(/['`]/g, "\\$&").replace(/\n/g, " ");
+      return `  {
     id: '${post.id}',
-    title: '${post.title.replace(/'/g, "\\'")}',
+    title: '${escapedTitle}',
     date: '${post.date}',
-    author: '${post.author.replace(/'/g, "\\'")}',
+    author: '${escapedAuthor}',
     categories: ${JSON.stringify(post.categories)},
-    excerpt: '${post.excerpt.replace(/'/g, "\\'")}',
+    excerpt: '${escapedExcerpt}',
     content: ${post.id.replace(/-/g, '_')}Md,
-  }`).join(',\n');
+  }`;
+    }).join(',\n');
     
     const importMatch = postsContent.match(/^(import[^;]+;?\n)*/);
     const existingImports = importMatch ? importMatch[0] : '';
