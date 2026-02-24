@@ -71,6 +71,7 @@ jobs:
           fi
 
       - name: Fetch X bookmarks
+        id: fetch-bookmarks
         env:
           X_OAUTH2_ACCESS_TOKEN: ${{ secrets.X_OAUTH2_ACCESS_TOKEN }}
           X_OAUTH2_REFRESH_TOKEN: ${{ secrets.X_OAUTH2_REFRESH_TOKEN }}
@@ -83,6 +84,26 @@ jobs:
           echo "Starting X bookmarks fetch..."
           npm run fetch-bookmarks
           echo "Fetch completed"
+
+      - name: Update GitHub Secrets
+        if: steps.fetch-bookmarks.outputs.refresh_token != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "⚠️ Warning: GH_PAT secret is not set!"
+            echo "Cannot automatically persist rotated tokens."
+            exit 1
+          fi
+          
+          echo "Updating Repository Secrets..."
+          
+          # Use GitHub CLI to set the secrets
+          echo "${{ steps.fetch-bookmarks.outputs.access_token }}" | gh secret set X_OAUTH2_ACCESS_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.fetch-bookmarks.outputs.refresh_token }}" | gh secret set X_OAUTH2_REFRESH_TOKEN -R $GITHUB_REPOSITORY
+          
+          echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
 
       - name: Debug - Show generated files
         run: |

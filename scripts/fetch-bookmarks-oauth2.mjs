@@ -8,7 +8,7 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } from 'fs';
 
 // Load environment variables
 config();
@@ -93,6 +93,16 @@ async function refreshAccessToken() {
     if (data.refresh_token) {
       console.log(`X_OAUTH2_REFRESH_TOKEN=${data.refresh_token}`);
     }
+    
+    // Write tokens to GitHub Actions output if available
+    if (process.env.GITHUB_OUTPUT) {
+      console.log('📝 Writing tokens to GitHub Output for secret rotation...');
+      appendFileSync(process.env.GITHUB_OUTPUT, `access_token=${data.access_token}\n`);
+      if (data.refresh_token) {
+        appendFileSync(process.env.GITHUB_OUTPUT, `refresh_token=${data.refresh_token}\n`);
+      }
+    }
+    
     console.log('');
     
     return data.access_token;
@@ -213,6 +223,18 @@ async function fetchXBookmarks(userId, maxResults = 10) {
     }));
   }
   
+  // Map media attachments to tweets
+  if (data.includes?.media) {
+    const mediaMap = new Map(data.includes.media.map((m) => [m.media_key, m]));
+    data.data = data.data.map((tweet) => {
+      const media = tweet.attachments?.media_keys?.map((key) => mediaMap.get(key)).filter(Boolean) || [];
+      return {
+        ...tweet,
+        media,
+      };
+    });
+  }
+  
   return data;
 }
 
@@ -234,15 +256,33 @@ function bookmarkToMarkdown(bookmark) {
   // Get title from first line, limit to 100 chars
   const title = text.split('\n')[0].substring(0, 100);
   
+  const metrics = bookmark.public_metrics;
+  const metricsText = metrics ? `
+
+**Metrics:**
+* Likes: ${metrics.like_count || 0}
+* Reposts: ${metrics.retweet_count || 0}
+* Replies: ${metrics.reply_count || 0}
+* Quotes: ${metrics.quote_count || 0}` : '';
+
+  const mediaText = bookmark.media && bookmark.media.length > 0 ? `\n\n**Media:**\n\n` + bookmark.media.map(m => {
+    if (m.type === 'photo') {
+      return `![Image](${m.url})`;
+    } else if (m.type === 'video' || m.type === 'animated_gif') {
+      return `![Video Preview](${m.preview_image_url})\n*[Video URL](${bookmark.url})*`;
+    }
+    return '';
+  }).join('\n\n') : '';
+
   return `## ${title}
 
 **Originally posted by [@${username}](https://x.com/${username})** on ${formattedDate}
 
-[View original tweet](${bookmark.url})
+[View original tweet](${bookmark.url})${metricsText}
 
 ---
 
-${text}
+${text}${mediaText}
 `;
 }
 
