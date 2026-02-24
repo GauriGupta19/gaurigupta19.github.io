@@ -54,11 +54,19 @@ export default function BlogPost() {
       updateMetaTag("og:description", post.excerpt || "");
       updateMetaTag("og:url", window.location.href);
       updateMetaTag("og:type", "article");
+      updateMetaTag("og:site_name", "Gauri Gupta");
+      updateMetaTag("og:image", window.location.origin + "/assets/images/profile.webp");
+      updateMetaTag("og:image:width", "1200");
+      updateMetaTag("og:image:height", "630");
+      updateMetaTag("og:image:alt", post.title);
 
       // Twitter Card tags
       updateNameMetaTag("twitter:card", "summary_large_image");
       updateNameMetaTag("twitter:title", post.title);
       updateNameMetaTag("twitter:description", post.excerpt || "");
+      updateNameMetaTag("twitter:image", window.location.origin + "/assets/images/profile.webp");
+      updateNameMetaTag("twitter:image:alt", post.title);
+      updateNameMetaTag("twitter:creator", "@gauri__gupta");
 
       // Generic description
       updateNameMetaTag("description", post.excerpt || "");
@@ -75,23 +83,14 @@ export default function BlogPost() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleShare = (
-    platform: "twitter" | "linkedin" | "facebook" | "whatsapp" | "reddit"
-  ) => {
+  const handleShare = (platform: "twitter" | "linkedin") => {
     const pageUrl = window.location.href;
     const url = encodeURIComponent(pageUrl);
     const title = encodeURIComponent(post?.title || "");
 
     const shareUrls: Record<string, string> = {
       twitter: `https://x.com/intent/tweet?url=${url}&text=${title}`,
-      // LinkedIn with proper parameters
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
-      // Facebook sharer
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-      // WhatsApp
-      whatsapp: `https://api.whatsapp.com/send?text=${title}%20${url}`,
-      // Reddit
-      reddit: `https://reddit.com/submit?url=${url}&title=${title}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`,
     };
 
     const shareUrl = shareUrls[platform];
@@ -119,12 +118,12 @@ export default function BlogPost() {
 
   return (
     <div className="animate-fade-in">
-      <div className="max-w-[680px] mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-[680px] mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-24">
         {/* Top Bar with Back Link and Share */}
-        <div className="flex items-center justify-between mb-12 animate-slide-up">
+        <div className="flex items-center justify-between mb-8 sm:mb-12 animate-slide-up">
           <Link
             to="/blogs"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-11"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
             Blogs
@@ -134,7 +133,7 @@ export default function BlogPost() {
           <DropdownMenu>
             <div>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50">
+                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-11 sm:min-h-0">
                   <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Share</span>
                 </button>
@@ -168,13 +167,13 @@ export default function BlogPost() {
 
         {/* Article Header */}
         <header
-          className="mb-10 animate-slide-up"
+          className="mb-8 sm:mb-10 animate-slide-up"
           style={{ animationDelay: "50ms" }}
         >
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight leading-tight mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight leading-tight mb-3 sm:mb-4">
             {post.title}
           </h1>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 sm:gap-3 text-sm text-muted-foreground">
             <span>{post.author}</span>
             <span className="text-border">·</span>
             <span className="font-mono text-xs">{post.date}</span>
@@ -183,7 +182,7 @@ export default function BlogPost() {
 
         {/* Article Content */}
         <article
-          className="mb-12 animate-slide-up"
+          className="mb-8 sm:mb-12 animate-slide-up"
           style={{ animationDelay: "100ms" }}
         >
           <MarkdownRenderer content={post.content} />
@@ -191,13 +190,13 @@ export default function BlogPost() {
 
         {/* Footer */}
         <footer
-          className="pt-8 border-t border-border animate-slide-up"
+          className="pt-6 sm:pt-8 border-t border-border animate-slide-up"
           style={{ animationDelay: "150ms" }}
         >
           <div className="flex items-center justify-between">
             <Link
               to="/blogs"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group touch-manipulation min-h-11"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
               All articles
@@ -205,7 +204,7 @@ export default function BlogPost() {
              <DropdownMenu>
             <div>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50">
+                <button className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 sm:py-1.5 rounded-lg hover:bg-muted/50 touch-manipulation min-h-11 sm:min-h-0">
                   <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Share</span>
                 </button>
@@ -240,11 +239,11 @@ export default function BlogPost() {
         {/* Transient visual confirmation for copy action */}
         <div
           aria-live="polite"
-          className={`fixed right-6 top-20 z-50 pointer-events-none transition-opacity duration-300 ${
+          className={`fixed right-4 sm:right-6 top-20 z-50 pointer-events-none transition-opacity duration-300 ${
             copied ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="bg-foreground/95 text-background rounded-md px-4 py-2 shadow-lg flex items-center gap-3 text-sm font-medium">
+          <div className="bg-foreground/95 text-background rounded-md px-3 sm:px-4 py-2 shadow-lg flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium">
             <Check className="w-4 h-4 text-green-500 font-bold" />
             <span>Link copied to clipboard</span>
           </div>

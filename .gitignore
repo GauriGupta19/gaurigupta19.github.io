@@ -28,8 +28,7 @@ vendor/
 
 .DS_Store
 
-# OAuth PKCE (do not commit)
-.oauth_pkce.txt
-
-# Local env for testing (same as GitHub secrets)
+# Environment variables
+.env
 .env.local
+.env.*.local

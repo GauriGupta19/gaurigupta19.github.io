@@ -15,7 +15,8 @@ import {
   FiCircle, 
   FiShare2, 
   FiLink, 
-  FiMessageCircle 
+  FiMessageCircle,
+  FiMenu
 } from "react-icons/fi";
 
 // Location and layout icons
@@ -49,6 +50,8 @@ export const ChevronRight = FiChevronRight;
 export const Moon = FiMoon;
 export const Sun = FiSun;
 export const XIcon = FiX;
+export const X = FiX;
+export const Menu = FiMenu;
 export const Check = FiCheck;
 export const Circle = FiCircle;
 

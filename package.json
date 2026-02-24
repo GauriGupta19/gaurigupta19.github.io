@@ -3,14 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://gaurigupta19.github.io",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "prerender:posts": "node scripts/prerender-posts.cjs",
-    "fetch-x-bookmarks": "node scripts/fetch-x-bookmarks.mjs",
+    "build": "tsc -b && vite build && touch dist/.nojekyll",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "prepare": "husky",
+    "fetch-bookmarks": "node scripts/fetch-bookmarks-oauth2.mjs",
+    "get-oauth2-token": "node scripts/get-oauth2-token.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -23,6 +26,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "lucide-react": "^0.555.0",
     "motion": "^12.23.24",
     "next": "16.0.4",
@@ -47,6 +51,7 @@
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
+    "gh-pages": "^6.3.0",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "postcss": "8.5.6",

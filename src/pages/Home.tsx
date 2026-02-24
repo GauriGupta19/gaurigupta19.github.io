@@ -9,27 +9,36 @@ export default function Home() {
     // Two-column layout: fixed left sidebar (1/3) and scrollable right content (2/3)
     <div className="animate-fade-in">
       <div className="md:flex">
-        {/* Left: fixed sidebar on medium+ screens */}
-        <aside className="hidden md:block md:fixed md:top-16 md:bottom-0 md:w-1/3 md:overflow-auto">
-          <div className="h-full p-6 flex justify-center items-center">
+        {/* Mobile: Sidebar at top */}
+        <aside className="md:hidden w-full border-b border-border bg-background pt-4">
+          <div className="px-4 pb-8 max-w-2xl mx-auto">
+            <Sidebar />
+          </div>
+        </aside>
+
+        {/* Desktop: fixed sidebar on medium+ screens */}
+        <aside className="hidden md:block md:fixed md:top-16 md:bottom-0 md:w-1/3 md:overflow-auto md:pt-8">
+          <div className="h-full p-6 flex justify-center items-start">
             <Sidebar />
           </div>
         </aside>
 
         {/* Right: main content - add left margin equal to sidebar width on md+ */}
         <main className="w-full md:ml-[33.3333%] md:w-2/3">
-          <div className="max-w-[680px] mx-auto px-6 py-16 md:py-24">
+          <div className="max-w-[680px] mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-24">
             {/* About Section */}
             <section
-              className="mb-16 animate-slide-up"
+              className="mb-12 sm:mb-16 animate-slide-up"
               style={{ animationDelay: "100ms" }}
             >
-              <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-6">
+              <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4 sm:mb-6">
                 About
               </h2>
-              <div className="space-y-5 text-foreground/90 leading-[1.8]">
+              <div className="space-y-4 sm:space-y-5 text-foreground/90 leading-[1.75] sm:leading-[1.8] text-[15px] sm:text-base">
                 <p>
-                  Hi! I am currently building my company NeoSigma(curently in stealth and will share more soon!).
+                  Hi! I am currently building my company researching
+                  post-training data for advancing model capabilities. We are
+                  currently in stealth mode and will share more soon.
                 </p>
                 <p>
                   Before that, most recently I was at{" "}
@@ -120,7 +129,7 @@ export default function Home() {
 
             {/* News Section (top 5, expandable) */}
             <section
-              className="mb-12 animate-slide-up"
+              className="mb-8 sm:mb-12 animate-slide-up"
               style={{ animationDelay: "200ms" }}
             >
               <div className="flex items-center justify-between mb-4">
@@ -129,23 +138,23 @@ export default function Home() {
                 </h2>
                 <button
                   onClick={() => setShowAll((s) => !s)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation min-h-11 px-3 -mr-3"
                 >
                   {showAll ? "Show less" : "Show more"}
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {(showAll ? news : news.slice(0, 5)).map((n, idx) => (
                   <div
                     key={idx}
-                    className="flex gap-6 group hover:bg-muted/30 -mx-3 px-3 py-2 rounded-lg transition-colors duration-200"
+                    className="flex flex-col sm:flex-row gap-2 sm:gap-6 group hover:bg-muted/30 -mx-2 sm:-mx-3 px-2 sm:px-3 py-2 rounded-lg transition-colors duration-200"
                   >
-                    <div className="w-24 shrink-0 text-sm text-muted-foreground font-mono">
+                    <div className="w-full sm:w-24 shrink-0 text-xs sm:text-sm text-muted-foreground font-mono">
                       {n.date}
                     </div>
                     <div
-                      className="flex-1 text-foreground/90 leading-[1.7] news-content"
+                      className="flex-1 text-[15px] sm:text-base text-foreground/90 leading-[1.7] news-content"
                       dangerouslySetInnerHTML={{ __html: n.content }}
                     />
                   </div>

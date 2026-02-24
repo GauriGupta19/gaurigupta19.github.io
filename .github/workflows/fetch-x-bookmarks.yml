@@ -1,6 +1,9 @@
 name: Fetch X Bookmarks
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # Run daily at 9:00 AM UTC (adjust timezone as needed)
     - cron: '0 9 * * *'
@@ -25,73 +28,128 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: HUSKY=0 npm ci
-
-      - name: Get X access token
-        id: get-token
-        env:
-          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
-          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
-          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN || secrets.X_BEARER_TOKEN }}
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Debug - Show environment info
         run: |
-          # Trim whitespace/newlines from secrets (often pasted with trailing newline)
-          X_REFRESH_TOKEN=$(printf '%s' "$X_REFRESH_TOKEN" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          X_CLIENT_ID=$(printf '%s' "$X_CLIENT_ID" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          X_CLIENT_SECRET=$(printf '%s' "$X_CLIENT_SECRET" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          X_ACCESS_TOKEN=$(printf '%s' "$X_ACCESS_TOKEN" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Working directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
 
-          if [ -n "$X_REFRESH_TOKEN" ] && [ -n "$X_CLIENT_ID" ] && [ -n "$X_CLIENT_SECRET" ]; then
-            echo "Refreshing X access token..."
-            basic=$(printf '%s' "${X_CLIENT_ID}:${X_CLIENT_SECRET}" | base64 -w 0)
-            printf '%s' "$X_REFRESH_TOKEN" > /tmp/refresh_token.txt
-            resp=$(curl -sS -X POST 'https://api.x.com/2/oauth2/token' \
-              -H "Authorization: Basic $basic" \
-              -H 'Content-Type: application/x-www-form-urlencoded' \
-              --data-urlencode 'grant_type=refresh_token' \
-              --data-urlencode 'refresh_token@/tmp/refresh_token.txt')
-            token=$(echo "$resp" | jq -r '.access_token // empty')
-            if [ -z "$token" ]; then
-              echo "::error::Failed to refresh token: $resp"
-              echo "::error::If you see 'Value passed for the token was invalid', X rotates refresh tokens: get a new one by re-running the OAuth flow and update the X_REFRESH_TOKEN secret."
-              exit 1
-            fi
-            echo "access_token=$token" >> $GITHUB_OUTPUT
-            # X returns a new refresh_token each time; save it so the next run works (avoids "token was invalid")
-            new_refresh=$(echo "$resp" | jq -r '.refresh_token // empty')
-            if [ -n "$new_refresh" ] && [ -n "$GH_PAT" ]; then
-              echo "Updating X_REFRESH_TOKEN secret with rotated token..."
-              export GH_TOKEN="$GH_PAT"
-              printf '%s' "$new_refresh" | gh secret set X_REFRESH_TOKEN --repo "$GITHUB_REPOSITORY" --body-file -
-            fi
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm ci
+          echo "Dependencies installed successfully"
+          echo "Installed packages:"
+          npm list --depth=0 || true
+
+      - name: Debug - Verify secrets and config
+        run: |
+          echo "Checking environment variables..."
+          echo "X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}"
+          echo "MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}"
+          if [ -z "${{ secrets.X_ACCESS_TOKEN }}" ]; then
+            echo "⚠️ Warning: X_ACCESS_TOKEN is not set!"
           else
-            echo "access_token=$X_ACCESS_TOKEN" >> $GITHUB_OUTPUT
+            echo "✅ X_ACCESS_TOKEN is set"
+          fi
+          if [ -z "${{ secrets.X_REFRESH_TOKEN }}" ]; then
+            echo "⚠️ Warning: X_REFRESH_TOKEN is not set!"
+          else
+            echo "✅ X_REFRESH_TOKEN is set"
+          fi
+          if [ -z "${{ secrets.X_CLIENT_ID }}" ]; then
+            echo "⚠️ Warning: X_CLIENT_ID is not set!"
+          else
+            echo "✅ X_CLIENT_ID is set"
+          fi
+          if [ -z "${{ secrets.X_CLIENT_SECRET }}" ]; then
+            echo "⚠️ Warning: X_CLIENT_SECRET is not set!"
+          else
+            echo "✅ X_CLIENT_SECRET is set"
           fi
 
       - name: Fetch X bookmarks
+        id: fetch-bookmarks
         env:
-          X_ACCESS_TOKEN: ${{ steps.get-token.outputs.access_token }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
+          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
+          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
           X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
-          MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '5' }}
-        run: npm run fetch-x-bookmarks
+          MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
+          DEBUG: 'true'
+        run: |
+          echo "Starting X bookmarks fetch..."
+          npm run fetch-bookmarks
+          echo "Fetch completed"
+
+      - name: Update GitHub Secrets
+        if: steps.fetch-bookmarks.outputs.refresh_token != ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "⚠️ Warning: GH_PAT secret is not set!"
+            echo "Cannot automatically persist rotated tokens."
+            exit 1
+          fi
+          
+          echo "Updating Repository Secrets..."
+          
+          # Use GitHub CLI to set the secrets
+          echo "${{ steps.fetch-bookmarks.outputs.access_token }}" | gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.fetch-bookmarks.outputs.refresh_token }}" | gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY
+          
+          echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
+
+      - name: Debug - Show generated files
+        run: |
+          echo "Checking for generated files..."
+          echo "Contents of src/pages/posts/:"
+          ls -la src/pages/posts/ 2>/dev/null || echo "Directory does not exist"
+          echo "\nContents of src/data/:"
+          ls -la src/data/ 2>/dev/null || echo "Directory does not exist"
 
       - name: Check for changes
         id: git-check
         run: |
+          echo "Git status:"
+          git status
+          echo "\nGit diff:"
+          git diff
           if [ -n "$(git status --porcelain)" ]; then
+            echo "✅ Changes detected"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
+            echo "ℹ️ No changes detected"
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit and push changes
         if: steps.git-check.outputs.has_changes == 'true'
         run: |
+          echo "Configuring git..."
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add src/data/news.ts
-          git commit -m "chore: update X bookmarks [skip ci]"
+          echo "Adding files..."
+          git add src/data/posts.ts src/pages/posts/
+          echo "Files added:"
+          git diff --cached --stat
+          echo "Committing changes..."
+          git commit -m "chore: add blog posts from X bookmarks [skip ci]"
+          echo "Pushing to remote..."
           git push
+          echo "✅ Successfully pushed changes"
 
+      - name: Workflow summary
+        if: always()
+        run: |
+          echo "### Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Username**: ${{ secrets.X_USERNAME || 'gauri__gupta' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Max Bookmarks**: ${{ secrets.MAX_BOOKMARKS || '10' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes Detected**: ${{ steps.git-check.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY

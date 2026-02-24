@@ -10,7 +10,7 @@ const posts = [
     excerpt:
       'These are my job preparation notes on optimizing the training and inference of large language models. This covers a range of techniques to improve memory usage, computational efficiency, and inference optimization techniques along with advanced parallelism strategies used in LLMs.',
     content: llmOptimizationMd,
-  },
+  }
 ];
 
 export { posts };
