@@ -285,7 +285,7 @@ async function main() {
       
       let text = bookmark.text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
       
-      const content = `Bookmarked from <a href='${tweetUrl}' target='_blank' rel='noreferrer'>@${author}</a>: ${text}`;
+      const content = `${text} <a href='${tweetUrl}' target='_blank' rel='noreferrer'>[Link]</a>`;
       
       newNews.push({
         date: monthYear,

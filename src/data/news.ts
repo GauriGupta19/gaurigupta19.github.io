@@ -1,17 +1,17 @@
 export const news = [
   {
     date: "February 2026",
-    content: "Bookmarked from <a href='https://x.com/gauri__gupta/status/2023878690950836596' target='_blank' rel='noreferrer'>@gauri__gupta</a>: Super excited and honoured to be a part of Delta Fellows along with such incredibly talented folks! See y’all soon :) https://t.co/CiXBLeWNnK",
+    content: "Super excited and honoured to be a part of Delta Fellows along with such incredibly talented folks! See y’all soon :) <a href='https://x.com/gauri__gupta/status/2023878690950836596' target='_blank' rel='noreferrer'>[Link]</a> https://t.co/CiXBLeWNnK",
   },
   {
     date: "November 2025",
-    content: "Bookmarked from <a href='https://x.com/gauri__gupta/status/1991824700910235973' target='_blank' rel='noreferrer'>@gauri__gupta</a>: Honored to be invited to the OpenAI Founders Table dinner. Incredible night with great people and amazing conversations. Excited for what we are building @NeoSigmaAI https://t.co/faoyoXjXPd",
+    content: "Honored to be invited to the OpenAI Founders Table dinner. Incredible night with great people and amazing conversations. Excited for what we are building @NeoSigmaAI <a href='https://x.com/gauri__gupta/status/1991824700910235973' target='_blank' rel='noreferrer'>[Link]</a> https://t.co/faoyoXjXPd",
   },
   {
     date: "November 2025",
-    content: "Bookmarked from <a href='https://x.com/gauri__gupta/status/1994928193527320725' target='_blank' rel='noreferrer'>@gauri__gupta</a>: Last month I had the privilege of presenting at the MIT AI Conference alongside incredible leaders and researchers. I shared what we are building at @NeoSigmaAI on curating intelligence in the post-web era. Whether we are in the age of scaling or the age of research, we’re https://t.co/GSJSA3wgUx",
+    content: "Last month I had the privilege of presenting at the MIT AI Conference alongside incredible leaders and researchers. I shared what we are building at @NeoSigmaAI on curating intelligence in the post-web era. Whether we are in the age of scaling or the age of research, we’re <a href='https://x.com/gauri__gupta/status/1994928193527320725' target='_blank' rel='noreferrer'>[Link]</a> https://t.co/GSJSA3wgUx",
   },
-{
+  {
     date: "October 2025",
     content:
       "Invited for a talk at <a href='https://www.mitaiconference.org/' target='_blank' rel='noreferrer'>MIT AI Conference</a>.",
