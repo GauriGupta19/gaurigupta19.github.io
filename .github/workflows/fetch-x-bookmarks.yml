@@ -70,23 +70,19 @@ jobs:
             echo "✅ X_CLIENT_SECRET is set"
           fi
 
-      - name: Fetch X bookmarks
-        id: fetch-bookmarks
+      - name: Refresh OAuth2 Token
+        id: refresh-token
         env:
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
           X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
-          X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
-          MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
-          DEBUG: 'true'
         run: |
-          echo "Starting X bookmarks fetch..."
-          npm run fetch-bookmarks
-          echo "Fetch completed"
+          echo "Starting token refresh..."
+          node scripts/refresh-token-only.mjs
+          echo "Token refresh step completed"
 
       - name: Update GitHub Secrets
-        if: steps.fetch-bookmarks.outputs.refresh_token != ''
+        if: steps.refresh-token.outputs.refresh_token != ''
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -100,10 +96,26 @@ jobs:
           echo "Updating Repository Secrets..."
           
           # Use GitHub CLI to set the secrets
-          echo "${{ steps.fetch-bookmarks.outputs.access_token }}" | gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY
-          echo "${{ steps.fetch-bookmarks.outputs.refresh_token }}" | gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.refresh-token.outputs.access_token }}" | gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY
+          echo "${{ steps.refresh-token.outputs.refresh_token }}" | gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY
           
           echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
+
+      - name: Fetch X bookmarks
+        id: fetch-bookmarks
+        env:
+          # Use the newly generated tokens for the fetch call
+          X_ACCESS_TOKEN: ${{ steps.refresh-token.outputs.access_token || secrets.X_ACCESS_TOKEN }}
+          X_REFRESH_TOKEN: ${{ steps.refresh-token.outputs.refresh_token || secrets.X_REFRESH_TOKEN }}
+          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
+          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
+          X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
+          MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
+          DEBUG: 'true'
+        run: |
+          echo "Starting X bookmarks fetch..."
+          npm run fetch-bookmarks
+          echo "Fetch completed"
 
       - name: Debug - Show generated files
         run: |
