@@ -284,6 +284,8 @@ async function main() {
       const tweetUrl = bookmark.url || `https://x.com/${author}/status/${bookmark.id}`;
       
       let text = bookmark.text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+      // Remove trailing t.co link (usually the link to the tweet itself or attached media)
+      text = text.replace(/https:\/\/t\.co\/\w+\s*$/, '').trim();
       
       const content = `${text} <a href='${tweetUrl}' target='_blank' rel='noreferrer'>[Link]</a>`;
       
