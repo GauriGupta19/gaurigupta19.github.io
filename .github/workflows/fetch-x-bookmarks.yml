@@ -47,7 +47,7 @@ jobs:
       - name: Debug - Verify secrets and config
         run: |
           echo "Checking environment variables..."
-          echo "X_USERNAME: ${{ secrets.X_USERNAME || 'Abhiram2k03' }}"
+          echo "X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}"
           echo "MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}"
           if [ -z "${{ secrets.X_ACCESS_TOKEN }}" ]; then
             echo "⚠️ Warning: X_ACCESS_TOKEN is not set!"
