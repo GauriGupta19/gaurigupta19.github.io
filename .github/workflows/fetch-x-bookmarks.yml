@@ -135,11 +135,11 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           echo "Adding files..."
-          git add src/data/posts.ts src/pages/posts/
+          git add src/data/news.ts src/data/posts.ts src/pages/posts/
           echo "Files added:"
           git diff --cached --stat
           echo "Committing changes..."
-          git commit -m "chore: add blog posts from X bookmarks [skip ci]"
+          git commit -m "chore: add X bookmarks to news [skip ci]"
           echo "Pushing to remote..."
           git push
           echo "✅ Successfully pushed changes"
