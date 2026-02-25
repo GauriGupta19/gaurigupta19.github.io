@@ -287,7 +287,7 @@ async function main() {
       // Remove trailing t.co link (usually the link to the tweet itself or attached media)
       text = text.replace(/https:\/\/t\.co\/\w+\s*$/, '').trim();
       
-      const content = `${text} <a href='${tweetUrl}' target='_blank' rel='noreferrer'>[Link]</a>`;
+      const content = `<a href='${tweetUrl}' target='_blank' rel='noreferrer'>${text}</a>`;
       
       newNews.push({
         date: monthYear,
