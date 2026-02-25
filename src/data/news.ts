@@ -1,15 +1,15 @@
 export const news = [
   {
     date: "February 2026",
-    content: "Super excited and honoured to be a part of Delta Fellows along with such incredibly talented folks! See y’all soon :) <a href='https://x.com/gauri__gupta/status/2023878690950836596' target='_blank' rel='noreferrer'>[Link]</a>",
+    content: "<a href='https://x.com/gauri__gupta/status/2023878690950836596' target='_blank' rel='noreferrer'>Super excited and honoured to be a part of Delta Fellows along with such incredibly talented folks! See y’all soon :)</a>",
   },
   {
     date: "November 2025",
-    content: "Honored to be invited to the OpenAI Founders Table dinner. Incredible night with great people and amazing conversations. Excited for what we are building @NeoSigmaAI <a href='https://x.com/gauri__gupta/status/1991824700910235973' target='_blank' rel='noreferrer'>[Link]</a>",
+    content: "<a href='https://x.com/gauri__gupta/status/1991824700910235973' target='_blank' rel='noreferrer'>Honored to be invited to the OpenAI Founders Table dinner. Incredible night with great people and amazing conversations. Excited for what we are building @NeoSigmaAI</a>",
   },
   {
     date: "November 2025",
-    content: "Last month I had the privilege of presenting at the MIT AI Conference alongside incredible leaders and researchers. I shared what we are building at @NeoSigmaAI on curating intelligence in the post-web era. Whether we are in the age of scaling or the age of research, we’re <a href='https://x.com/gauri__gupta/status/1994928193527320725' target='_blank' rel='noreferrer'>[Link]</a>",
+    content: "<a href='https://x.com/gauri__gupta/status/1994928193527320725' target='_blank' rel='noreferrer'>Last month I had the privilege of presenting at the MIT AI Conference alongside incredible leaders and researchers. I shared what we are building at @NeoSigmaAI on curating intelligence in the post-web era. Whether we are in the age of scaling or the age of research, we’re</a>",
   },
   {
     date: "October 2025",
