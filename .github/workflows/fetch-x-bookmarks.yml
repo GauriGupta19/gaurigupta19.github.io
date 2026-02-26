@@ -12,6 +12,10 @@ on:
 permissions:
   contents: write # Required to commit and push changes
 
+concurrency:
+  group: fetch-x-bookmarks
+  cancel-in-progress: false
+
 jobs:
   fetch-bookmarks:
     runs-on: ubuntu-latest
@@ -82,7 +86,7 @@ jobs:
           echo "Token refresh step completed"
 
       - name: Update GitHub Secrets
-        if: steps.refresh-token.outputs.refresh_token != ''
+        if: steps.refresh-token.outputs.access_token != ''
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -103,6 +107,7 @@ jobs:
 
       - name: Fetch X bookmarks
         id: fetch-bookmarks
+        continue-on-error: true
         env:
           # Use the newly generated tokens for the fetch call
           X_ACCESS_TOKEN: ${{ steps.refresh-token.outputs.access_token || secrets.X_ACCESS_TOKEN }}
