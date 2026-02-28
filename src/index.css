@@ -126,6 +126,13 @@
   a, button {
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* Home page: remove vertical divider between sidebar and content */
+  .home-page main,
+  .home-page .home-sidebar {
+    border-left: none !important;
+    border-right: none !important;
+  }
 }
 
 @layer utilities {

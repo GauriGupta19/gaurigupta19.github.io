@@ -5,7 +5,7 @@ import news from "../data/news";
 export default function Home() {
   return (
     // Two-column layout: fixed left sidebar (1/3) and scrollable right content (2/3)
-    <div className="animate-fade-in">
+    <div className="animate-fade-in home-page">
       <div className="md:flex">
         {/* Mobile: Sidebar at top */}
         <aside className="md:hidden w-full border-b border-border bg-background pt-4">
@@ -15,7 +15,7 @@ export default function Home() {
         </aside>
 
         {/* Desktop: fixed sidebar on medium+ screens */}
-        <aside className="hidden md:block md:fixed md:top-16 md:bottom-0 md:w-1/3 md:overflow-auto md:pt-8">
+        <aside className="home-sidebar hidden md:block md:fixed md:top-16 md:bottom-0 md:w-1/3 md:overflow-hidden md:pt-8">
           <div className="h-full p-6 flex justify-center items-start">
             <Sidebar />
           </div>

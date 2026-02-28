@@ -81,7 +81,7 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
 
   // Regular sidebar (both mobile and desktop)
   return (
-    <aside className="flex flex-col gap-5 md:gap-6 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:overflow-y-auto">
+    <aside className="flex flex-col gap-5 md:gap-6 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:overflow-hidden">
       {/* Profile Image */}
       <div className="h-72 w-72 md:h-64 md:w-64 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
         <img
