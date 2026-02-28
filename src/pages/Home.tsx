@@ -36,8 +36,8 @@ export default function Home() {
               </h2>
               <div className="space-y-4 sm:space-y-5 text-foreground/90 leading-[1.75] sm:leading-[1.8] text-[15px] sm:text-base">
                 <p>
-                  Hi! I am currently building my company researching
-                  post-training data for advancing model capabilities. We are
+                  Hi! I am currently building my company, NeoSigma, where we are
+                  working on building self-improving ai systems. We are
                   currently in stealth mode and will share more soon.
                 </p>
                 <p>
