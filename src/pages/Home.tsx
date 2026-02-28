@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import news from "../data/news";
 
 export default function Home() {
-  const [showAll, setShowAll] = useState(false);
-
   return (
     // Two-column layout: fixed left sidebar (1/3) and scrollable right content (2/3)
     <div className="animate-fade-in">
@@ -36,9 +34,17 @@ export default function Home() {
               </h2>
               <div className="space-y-4 sm:space-y-5 text-foreground/90 leading-[1.75] sm:leading-[1.8] text-[15px] sm:text-base">
                 <p>
-                  Hi! I am currently building my company, NeoSigma, where we are
-                  working on building self-improving ai systems. We are
-                  currently in stealth mode and will share more soon.
+                  Hi! I am currently building my company,{" "}
+                  <a
+                    href="https://neosigma.ai"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="content-link"
+                  >
+                    NeoSigma
+                  </a>
+                  , where we are working on building self-improving ai systems.
+                  We are currently in stealth mode and will share more soon.
                 </p>
                 <p>
                   Before that, most recently I was at{" "}
@@ -127,7 +133,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* News Section (top 5, expandable) */}
+            {/* News Section (top 5) */}
             <section
               className="mb-8 sm:mb-12 animate-slide-up"
               style={{ animationDelay: "200ms" }}
@@ -136,16 +142,16 @@ export default function Home() {
                 <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
                   News
                 </h2>
-                <button
-                  onClick={() => setShowAll((s) => !s)}
+                <Link
+                  to="/news"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation min-h-11 px-3 -mr-3"
                 >
-                  {showAll ? "Show less" : "Show more"}
-                </button>
+                  Show more
+                </Link>
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {(showAll ? news : news.slice(0, 5)).map((n, idx) => (
+                {news.slice(0, 5).map((n, idx) => (
                   <div
                     key={idx}
                     className="flex flex-col sm:flex-row gap-2 sm:gap-6 group hover:bg-muted/30 -mx-2 sm:-mx-3 px-2 sm:px-3 py-2 rounded-lg transition-colors duration-200"
