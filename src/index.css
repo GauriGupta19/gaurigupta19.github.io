@@ -111,6 +111,17 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Hide scrollbar while keeping scroll functionality */
+  html,
+  body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Better tap highlighting */
   a, button {
     -webkit-tap-highlight-color: transparent;

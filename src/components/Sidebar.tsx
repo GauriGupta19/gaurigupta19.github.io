@@ -1,42 +1,52 @@
-import { Link } from "react-router-dom";
-import {
-  MapPin,
-  Mail,
-  Twitter,
-  Linkedin,
-  GraduationCap,
-  News,
-  Blogs,
-} from "./Icons";
+import { Mail, Twitter, Linkedin } from "./Icons";
 
 interface SidebarProps {
   isMobileMenuOpen?: boolean;
   onClose?: () => void;
 }
 
-export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarProps) {
-  const socialLinks = [
-    { icon: MapPin, label: "San Francisco, CA", href: null },
-    { icon: Mail, label: "Email", href: "mailto:gaurigupta.iitd@gmail.com" },
-    { icon: Twitter, label: "X", href: "https://x.com/gauri__gupta" },
-    {
-      icon: Linkedin,
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/in/gauri-gupta-115567162",
-    },
-    {
-      icon: GraduationCap,
-      label: "Google Scholar",
-      href: "https://scholar.google.com/citations?user=SPaOg4cAAAAJ&hl=en",
-    },
-  ];
+function TldrBio() {
+  return (
+    <>
+      Building something new @{" "}
+      <a
+        href="https://x.com/neosigmaai"
+        target="_blank"
+        rel="noreferrer"
+        className="content-link"
+      >
+        NeoSigma
+      </a>
+      {" • "}ex-{" "}
+      <a
+        href="https://x.com/p0"
+        target="_blank"
+        rel="noreferrer"
+        className="content-link"
+      >
+        Parallel Web Systems
+      </a>{" "}
+      (early team) • MIT PhD dropout
+    </>
+  );
+}
 
+const socialButtons = [
+  { icon: Twitter, href: "https://x.com/gauri__gupta", label: "X" },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/in/gauri-gupta-115567162",
+    label: "LinkedIn",
+  },
+  { icon: Mail, href: "mailto:gaurigupta.iitd@gmail.com", label: "Email" },
+];
+
+export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarProps) {
   // Mobile full-screen menu overlay (when hamburger is clicked)
   if (isMobileMenuOpen) {
     return (
       <div className="flex flex-col items-center py-8 px-6 overflow-y-auto h-full">
-        {/* Profile Image */}
-        <div className="w-64 h-64 rounded-lg overflow-hidden bg-muted mb-6">
+        <div className="w-64 h-64 rounded-xl overflow-hidden bg-muted mb-6 ring-1 ring-border/50">
           <img
             src="/assets/images/profile.webp"
             alt="Gauri Gupta"
@@ -44,70 +54,26 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
             loading="lazy"
           />
         </div>
-
-        {/* Name & Bio */}
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold mb-2">Gauri Gupta</h3>
-          <p className="text-base text-muted-foreground">
-            Founder @{" "}
-            <a
-              href="https://www.neosigma.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              NeoSigma
-            </a>
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold mb-3">Gauri Gupta</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+            <TldrBio />
           </p>
         </div>
-
-        {/* Social Links & Navigation */}
-        <div className="w-full max-w-sm space-y-1">
-          {socialLinks.map((link) => {
-            const Icon = link.icon;
-            if (!link.href) {
-              return (
-                <div
-                  key={link.label}
-                  className="flex items-center gap-3 text-sm py-2 px-4"
-                >
-                  <Icon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{link.label}</span>
-                </div>
-              );
-            }
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                rel="noreferrer"
-                className="flex items-center gap-3 text-sm py-2 px-4 hover:bg-muted/50 rounded-lg transition-all group"
-                onClick={onClose}
-              >
-                <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>{link.label}</span>
-              </a>
-            );
-          })}
-          
-          {/* Navigation Links */}
-          <Link
-            to="/blogs"
-            onClick={onClose}
-            className="flex items-center gap-3 text-sm py-2 px-4 hover:bg-muted/50 rounded-lg transition-all group"
-          >
-            <Blogs className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Blogs</span>
-          </Link>
-          <Link
-            to="/news"
-            onClick={onClose}
-            className="flex items-center gap-3 text-sm py-2 px-4 hover:bg-muted/50 rounded-lg transition-all group"
-          >
-            <News className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>News</span>
-          </Link>
+        <div className="flex gap-3">
+          {socialButtons.map(({ icon: Icon, href, label }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith("mailto:") ? undefined : "_blank"}
+              rel="noreferrer"
+              title={label}
+              onClick={onClose}
+              className="w-10 h-10 rounded-full bg-muted hover:bg-foreground hover:text-background flex items-center justify-center transition-all duration-200 group"
+            >
+              <Icon className="w-4 h-4" />
+            </a>
+          ))}
         </div>
       </div>
     );
@@ -115,9 +81,9 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
 
   // Regular sidebar (both mobile and desktop)
   return (
-    <aside className="flex flex-col gap-6 md:gap-8 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:overflow-y-auto">
+    <aside className="flex flex-col gap-5 md:gap-6 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:overflow-y-auto">
       {/* Profile Image */}
-      <div className="h-80 w-80 md:h-72 md:w-72 rounded-lg overflow-hidden bg-muted">
+      <div className="h-72 w-72 md:h-64 md:w-64 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
         <img
           src="/assets/images/profile.webp"
           alt="Gauri Gupta"
@@ -126,68 +92,28 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
         />
       </div>
 
-      {/* About Section */}
-      <div className="text-center md:text-left">
-        <h3 className="text-2xl font-bold mb-2">Gauri Gupta</h3>
-        <p className="text-sm text-muted-foreground">
-          Founder @{" "}
-          <a
-            href="https://www.neosigma.ai/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            NeoSigma
-          </a>
+      {/* Name & TLDR Bio */}
+      <div className="text-center md:text-left space-y-2">
+        <h3 className="text-xl font-bold tracking-tight">Gauri Gupta</h3>
+        <p className="text-[13px] text-muted-foreground leading-relaxed">
+          <TldrBio />
         </p>
       </div>
 
-      {/* Social Links */}
-      <div className="space-y-4 w-full max-w-xs md:max-w-none flex flex-col items-center md:items-start">
-        {socialLinks.map((link) => {
-          const Icon = link.icon;
-          if (!link.href) {
-            return (
-              <div
-                key={link.label}
-                className="flex items-center gap-3 text-sm"
-              >
-                <Icon className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">{link.label}</span>
-              </div>
-            );
-          }
-          return (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-              rel="noreferrer"
-              className="flex items-center gap-3 text-sm hover:text-primary transition-colors group"
-            >
-              <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>{link.label}</span>
-            </a>
-          );
-        })}
-      </div>
-
-      {/* Navigation Links */}
-      <div className="flex flex-col gap-3 w-full max-w-xs md:max-w-none items-center md:items-start">
-        <Link
-          to="/blogs"
-          className="flex items-center gap-3 text-sm hover:text-primary transition-colors group"
-        >
-          <Blogs className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>Blogs</span>
-        </Link>
-        <Link
-          to="/news"
-          className="flex items-center gap-3 text-sm hover:text-primary transition-colors group"
-        >
-          <News className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>News</span>
-        </Link>
+      {/* Icon-only social buttons */}
+      <div className="flex gap-2">
+        {socialButtons.map(({ icon: Icon, href, label }) => (
+          <a
+            key={label}
+            href={href}
+            target={href.startsWith("mailto:") ? undefined : "_blank"}
+            rel="noreferrer"
+            title={label}
+            className="w-9 h-9 rounded-full bg-muted/80 hover:bg-foreground hover:text-background flex items-center justify-center transition-all duration-200 shrink-0"
+          >
+            <Icon className="w-[18px] h-[18px]" />
+          </a>
+        ))}
       </div>
     </aside>
   );
