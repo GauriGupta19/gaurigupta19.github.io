@@ -6,7 +6,7 @@
  */
 
 import { config } from 'dotenv';
-import { appendFileSync } from 'fs';
+import { appendFileSync, writeFileSync } from 'fs';
 
 config();
 
@@ -49,6 +49,12 @@ async function refreshAccessToken() {
     
     console.log('✅ Access token refreshed successfully');
     
+    // Always write tokens to temp files for reliable inter-step passing
+    writeFileSync('/tmp/x_access_token.txt', data.access_token);
+    if (data.refresh_token) {
+      writeFileSync('/tmp/x_refresh_token.txt', data.refresh_token);
+    }
+
     // Write tokens to GitHub Actions output if available
     if (process.env.GITHUB_OUTPUT) {
       console.log('📝 Writing tokens to GitHub Output for secret rotation...');

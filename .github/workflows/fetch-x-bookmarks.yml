@@ -1,12 +1,9 @@
 name: Fetch X Bookmarks
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    # Run daily at 9:00 AM UTC (adjust timezone as needed)
-    - cron: '0 9 * * *'
+    # Run daily at 9:00 AM PST (17:00 UTC)
+    - cron: '0 17 * * *'
   workflow_dispatch: # Allow manual triggering from GitHub Actions UI
 
 permissions:
@@ -86,38 +83,42 @@ jobs:
           echo "Token refresh step completed"
 
       - name: Update GitHub Secrets
-        if: steps.refresh-token.outputs.access_token != ''
+        if: steps.refresh-token.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "⚠️ Warning: GH_PAT secret is not set!"
-            echo "Cannot automatically persist rotated tokens."
+            echo "❌ GH_PAT secret is not set — cannot persist rotated tokens. Aborting."
             exit 1
           fi
-          
+
           echo "Updating Repository Secrets..."
-          
-          # Use GitHub CLI to set the secrets
-          echo "${{ steps.refresh-token.outputs.access_token }}" | gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY
-          echo "${{ steps.refresh-token.outputs.refresh_token }}" | gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY
-          
+
+          gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_access_token.txt || { echo "❌ Failed to update X_ACCESS_TOKEN"; exit 1; }
+          gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_refresh_token.txt || { echo "❌ Failed to update X_REFRESH_TOKEN"; exit 1; }
+
           echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
 
       - name: Fetch X bookmarks
         id: fetch-bookmarks
         continue-on-error: true
         env:
-          # Use the newly generated tokens for the fetch call
-          X_ACCESS_TOKEN: ${{ steps.refresh-token.outputs.access_token || secrets.X_ACCESS_TOKEN }}
-          X_REFRESH_TOKEN: ${{ steps.refresh-token.outputs.refresh_token || secrets.X_REFRESH_TOKEN }}
           X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
           X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
           MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
           DEBUG: 'true'
         run: |
+          # Always prefer the freshly refreshed token from temp file
+          if [ -f /tmp/x_access_token.txt ]; then
+            export X_ACCESS_TOKEN=$(cat /tmp/x_access_token.txt)
+            export X_REFRESH_TOKEN=$(cat /tmp/x_refresh_token.txt)
+            echo "Using refreshed tokens from temp files"
+          else
+            echo "❌ Temp token files not found — token refresh must have failed. Aborting."
+            exit 1
+          fi
           echo "Starting X bookmarks fetch..."
           npm run fetch-bookmarks
           echo "Fetch completed"
