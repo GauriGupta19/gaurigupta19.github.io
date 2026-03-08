@@ -24,10 +24,10 @@ const X_USERNAME = process.env.X_USERNAME || 'Abhiram2k03';
 const MAX_BOOKMARKS = parseInt(process.env.MAX_BOOKMARKS || '10');
 const DEBUG = process.env.DEBUG === 'true';
 
-if (!X_ACCESS_TOKEN || !X_REFRESH_TOKEN) {
-  console.error('❌ Error: X_ACCESS_TOKEN or X_REFRESH_TOKEN is not set');
+if (!X_ACCESS_TOKEN) {
+  console.error('❌ Error: X_ACCESS_TOKEN is not set');
   console.error('\nPlease run: npm run get-oauth2-token');
-  console.error('Then add both tokens to your .env file');
+  console.error('Then add the token to your .env file');
   process.exit(1);
 }
 
