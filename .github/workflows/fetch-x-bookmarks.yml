@@ -96,13 +96,18 @@ jobs:
           echo "Updating Repository Secrets..."
 
           gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_access_token.txt || { echo "❌ Failed to update X_ACCESS_TOKEN"; exit 1; }
-          gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_refresh_token.txt || { echo "❌ Failed to update X_REFRESH_TOKEN"; exit 1; }
+          
+          if [ -f /tmp/x_refresh_token.txt ]; then
+            gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_refresh_token.txt || { echo "❌ Failed to update X_REFRESH_TOKEN"; exit 1; }
+            echo "✅ Rotated X_REFRESH_TOKEN saved to repository secrets!"
+          else
+            echo "ℹ️ No refresh token provided by API, skipping secret update."
+          fi
 
-          echo "✅ Rotated X OAuth Tokens saved to repository secrets!"
+          echo "✅ Rotated X_ACCESS_TOKEN saved to repository secrets!"
 
       - name: Fetch X bookmarks
         id: fetch-bookmarks
-        continue-on-error: true
         env:
           X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
@@ -113,7 +118,9 @@ jobs:
           # Always prefer the freshly refreshed token from temp file
           if [ -f /tmp/x_access_token.txt ]; then
             export X_ACCESS_TOKEN=$(cat /tmp/x_access_token.txt)
-            export X_REFRESH_TOKEN=$(cat /tmp/x_refresh_token.txt)
+            if [ -f /tmp/x_refresh_token.txt ]; then
+              export X_REFRESH_TOKEN=$(cat /tmp/x_refresh_token.txt)
+            fi
             echo "Using refreshed tokens from temp files"
           else
             echo "❌ Temp token files not found — token refresh must have failed. Aborting."
@@ -153,7 +160,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           echo "Adding files..."
-          git add src/data/news.ts src/data/posts.ts src/pages/posts/
+          git add src/data/news.ts
           echo "Files added:"
           git diff --cached --stat
           echo "Committing changes..."
