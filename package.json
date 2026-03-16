@@ -12,8 +12,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "prepare": "husky",
-    "fetch-bookmarks": "node scripts/fetch-bookmarks-oauth2.mjs",
-    "get-oauth2-token": "node scripts/get-oauth2-token.mjs"
+    "fetch-bookmarks": "node scripts/fetch-bookmarks-oauth2.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -31,6 +30,7 @@
     "motion": "^12.23.24",
     "next": "16.0.4",
     "path": "0.12.7",
+    "playwright": "^1.58.2",
     "qss": "^3.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

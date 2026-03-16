@@ -1,22 +1,18 @@
 name: Fetch X Bookmarks
 
 on:
-  schedule:
-    # Run daily at 9:00 AM PST (17:00 UTC)
-    - cron: '0 17 * * *'
-  workflow_dispatch: # Allow manual triggering from GitHub Actions UI
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
-  contents: write # Required to commit and push changes
-
-concurrency:
-  group: fetch-x-bookmarks
-  cancel-in-progress: false
+  contents: write
 
 jobs:
   fetch-bookmarks:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,152 +25,32 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Debug - Show environment info
-        run: |
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-          echo "Working directory: $(pwd)"
-          echo "Directory contents:"
-          ls -la
-
       - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
           npm ci
-          echo "Dependencies installed successfully"
-          echo "Installed packages:"
-          npm list --depth=0 || true
-
-      - name: Debug - Verify secrets and config
-        run: |
-          echo "Checking environment variables..."
-          echo "X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}"
-          echo "MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}"
-          if [ -z "${{ secrets.X_ACCESS_TOKEN }}" ]; then
-            echo "⚠️ Warning: X_ACCESS_TOKEN is not set!"
-          else
-            echo "✅ X_ACCESS_TOKEN is set"
-          fi
-          if [ -z "${{ secrets.X_REFRESH_TOKEN }}" ]; then
-            echo "⚠️ Warning: X_REFRESH_TOKEN is not set!"
-          else
-            echo "✅ X_REFRESH_TOKEN is set"
-          fi
-          if [ -z "${{ secrets.X_CLIENT_ID }}" ]; then
-            echo "⚠️ Warning: X_CLIENT_ID is not set!"
-          else
-            echo "✅ X_CLIENT_ID is set"
-          fi
-          if [ -z "${{ secrets.X_CLIENT_SECRET }}" ]; then
-            echo "⚠️ Warning: X_CLIENT_SECRET is not set!"
-          else
-            echo "✅ X_CLIENT_SECRET is set"
-          fi
-
-      - name: Refresh OAuth2 Token
-        id: refresh-token
-        env:
-          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
-          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
-          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
-        run: |
-          echo "Starting token refresh..."
-          node scripts/refresh-token-only.mjs
-          echo "Token refresh step completed"
-
-      - name: Update GitHub Secrets
-        if: steps.refresh-token.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "❌ GH_PAT secret is not set — cannot persist rotated tokens. Aborting."
-            exit 1
-          fi
-
-          echo "Updating Repository Secrets..."
-
-          gh secret set X_ACCESS_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_access_token.txt || { echo "❌ Failed to update X_ACCESS_TOKEN"; exit 1; }
-          
-          if [ -f /tmp/x_refresh_token.txt ]; then
-            gh secret set X_REFRESH_TOKEN -R $GITHUB_REPOSITORY < /tmp/x_refresh_token.txt || { echo "❌ Failed to update X_REFRESH_TOKEN"; exit 1; }
-            echo "✅ Rotated X_REFRESH_TOKEN saved to repository secrets!"
-          else
-            echo "ℹ️ No refresh token provided by API, skipping secret update."
-          fi
-
-          echo "✅ Rotated X_ACCESS_TOKEN saved to repository secrets!"
+          npx playwright install chromium --with-deps
 
       - name: Fetch X bookmarks
-        id: fetch-bookmarks
         env:
-          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
-          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
-          X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
+          X_COOKIES: ${{ secrets.X_COOKIES }}
+          X_USERNAME: ${{ secrets.X_USERNAME || 'Abhiram2k03' }}
           MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
-          DEBUG: 'true'
-        run: |
-          # Always prefer the freshly refreshed token from temp file
-          if [ -f /tmp/x_access_token.txt ]; then
-            export X_ACCESS_TOKEN=$(cat /tmp/x_access_token.txt)
-            if [ -f /tmp/x_refresh_token.txt ]; then
-              export X_REFRESH_TOKEN=$(cat /tmp/x_refresh_token.txt)
-            fi
-            echo "Using refreshed tokens from temp files"
-          else
-            echo "❌ Temp token files not found — token refresh must have failed. Aborting."
-            exit 1
-          fi
-          echo "Starting X bookmarks fetch..."
-          npm run fetch-bookmarks
-          echo "Fetch completed"
-
-      - name: Debug - Show generated files
-        run: |
-          echo "Checking for generated files..."
-          echo "Contents of src/pages/posts/:"
-          ls -la src/pages/posts/ 2>/dev/null || echo "Directory does not exist"
-          echo "\nContents of src/data/:"
-          ls -la src/data/ 2>/dev/null || echo "Directory does not exist"
+        run: npm run fetch-bookmarks
 
       - name: Check for changes
         id: git-check
         run: |
-          echo "Git status:"
-          git status
-          echo "\nGit diff:"
-          git diff
           if [ -n "$(git status --porcelain)" ]; then
-            echo "✅ Changes detected"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
-            echo "ℹ️ No changes detected"
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit and push changes
         if: steps.git-check.outputs.has_changes == 'true'
         run: |
-          echo "Configuring git..."
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          echo "Adding files..."
-          git add src/data/news.ts
-          echo "Files added:"
-          git diff --cached --stat
-          echo "Committing changes..."
+          git add src/data/news.ts src/data/posts.ts src/pages/posts/
           git commit -m "chore: add X bookmarks to news [skip ci]"
-          echo "Pushing to remote..."
           git push
-          echo "✅ Successfully pushed changes"
-
-      - name: Workflow summary
-        if: always()
-        run: |
-          echo "### Workflow Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Username**: ${{ secrets.X_USERNAME || 'gauri__gupta' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Max Bookmarks**: ${{ secrets.MAX_BOOKMARKS || '10' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Changes Detected**: ${{ steps.git-check.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY

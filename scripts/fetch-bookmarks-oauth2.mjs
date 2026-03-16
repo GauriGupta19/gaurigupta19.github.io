@@ -1,278 +1,222 @@
 #!/usr/bin/env node
 
 /**
- * Script to fetch X bookmarks using OAuth 2.0
- * This works with the OAuth 2.0 token from get-oauth2-token.mjs
+ * Fetches X bookmarks using Playwright (real Chromium browser).
+ * Bypasses Cloudflare bot detection — works reliably with session cookies.
  */
 
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { chromium } from 'playwright';
 
-// Load environment variables
 config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-let X_ACCESS_TOKEN = process.env.X_ACCESS_TOKEN;
-const X_REFRESH_TOKEN = process.env.X_REFRESH_TOKEN;
-const X_CLIENT_ID = process.env.X_CLIENT_ID;
-const X_CLIENT_SECRET = process.env.X_CLIENT_SECRET;
+const X_COOKIES = process.env.X_COOKIES;
 const X_USERNAME = process.env.X_USERNAME || 'Abhiram2k03';
 const MAX_BOOKMARKS = parseInt(process.env.MAX_BOOKMARKS || '10');
 const DEBUG = process.env.DEBUG === 'true';
 
-if (!X_ACCESS_TOKEN) {
-  console.error('❌ Error: X_ACCESS_TOKEN is not set');
-  console.error('\nPlease run: npm run get-oauth2-token');
-  console.error('Then add the token to your .env file');
+if (!X_COOKIES) {
+  console.error('❌ Error: X_COOKIES is not set in .env');
+  console.error('\nHow to get it:');
+  console.error('  1. Open x.com in browser (logged in)');
+  console.error('  2. DevTools → Network → click any request to x.com');
+  console.error('  3. Request Headers → copy the full "Cookie" value');
+  console.error("  4. In .env: X_COOKIES='<paste here>'");
   process.exit(1);
 }
 
-if (!X_CLIENT_ID) {
-  console.error('❌ Error: X_CLIENT_ID is not set in .env file');
-  process.exit(1);
-}
-
-if (!X_CLIENT_SECRET) {
-  console.error('❌ Error: X_CLIENT_SECRET is not set in .env file');
-  console.error('This is required for refreshing access tokens');
-  process.exit(1);
-}
-
-if (DEBUG) {
-  console.log('\n🔍 DEBUG MODE ENABLED');
-  console.log('═══════════════════════════════════════');
-  console.log('Environment Configuration:');
-  console.log('  X_USERNAME:', X_USERNAME);
-  console.log('  MAX_BOOKMARKS:', MAX_BOOKMARKS);
-  console.log('  X_ACCESS_TOKEN:', X_ACCESS_TOKEN ? `Set (${X_ACCESS_TOKEN.length} chars)` : 'NOT SET');
-  console.log('  X_REFRESH_TOKEN:', X_REFRESH_TOKEN ? `Set (${X_REFRESH_TOKEN.length} chars)` : 'NOT SET');
-  console.log('  Working Directory:', process.cwd());
-  console.log('═══════════════════════════════════════\n');
-}
-
-// Token refreshing is now handled externally before this script runs.
-/**
- * Make an API request using the pre-refreshed token.
- * Throws an explicit error if a 401 occurs, because it indicates the external refresh failed or wasn't run.
- */
-async function fetchWithTokenRefresh(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${X_ACCESS_TOKEN}`,
-    },
-  });
-
-  if (response.status === 401) {
-    console.log('⚠️  Access token is invalid or expired.');
-    throw new Error('Access token expired. Please ensure tokens are refreshed before running this script.');
+// Parse flat cookie string into Playwright cookie objects
+function parseCookies(cookieStr) {
+  const cookies = [];
+  for (const part of cookieStr.split(';')) {
+    const eqIdx = part.indexOf('=');
+    if (eqIdx === -1) continue;
+    const name = part.slice(0, eqIdx).trim();
+    const value = part.slice(eqIdx + 1).trim();
+    if (!name) continue;
+    // Set for both x.com and twitter.com
+    for (const domain of ['.x.com', '.twitter.com']) {
+      cookies.push({ name, value, domain, path: '/', secure: true, sameSite: 'None' });
+    }
   }
-
-  return response;
-}
-
-async function getUserIdFromUsername(username) {
-  const url = `https://api.x.com/2/users/by/username/${username}?user.fields=id`;
-  
-  if (DEBUG) {
-    console.log('\n🔍 Fetching user ID...');
-    console.log('  URL:', url);
-  }
-  
-  const response = await fetchWithTokenRefresh(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (DEBUG) {
-    console.log('  Response Status:', response.status, response.statusText);
-  }
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    console.error('\n❌ Failed to get user ID');
-    console.error('  Status:', response.status);
-    console.error('  Error:', JSON.stringify(error, null, 2));
-    throw new Error(`Failed to get user ID: ${response.status} ${JSON.stringify(error)}`);
-  }
-  
-  const data = await response.json();
-  if (DEBUG) {
-    console.log('  User ID:', data.data.id);
-  }
-  return data.data.id;
-}
-
-async function fetchXBookmarks(userId, maxResults = 10) {
-  const url = new URL(`https://api.x.com/2/users/${userId}/bookmarks`);
-  url.searchParams.append('max_results', maxResults.toString());
-  url.searchParams.append('tweet.fields', 'created_at,author_id,public_metrics,text,attachments');
-  url.searchParams.append('user.fields', 'username,name');
-  url.searchParams.append('expansions', 'author_id,attachments.media_keys');
-  url.searchParams.append('media.fields', 'url,preview_image_url,type');
-  
-  if (DEBUG) {
-    console.log('\n🔍 Fetching bookmarks...');
-    console.log('  User ID:', userId);
-    console.log('  Max Results:', maxResults);
-    console.log('  URL:', url.toString());
-  }
-  
-  const response = await fetchWithTokenRefresh(url.toString(), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (DEBUG) {
-    console.log('  Response Status:', response.status, response.statusText);
-  }
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    console.error('\n❌ Failed to fetch bookmarks');
-    console.error('  Status:', response.status);
-    console.error('  Error:', JSON.stringify(error, null, 2));
-    throw new Error(`Failed to fetch bookmarks: ${response.status} ${JSON.stringify(error)}`);
-  }
-  
-  const data = await response.json();
-  
-  if (DEBUG) {
-    console.log('  Bookmarks found:', data.data?.length || 0);
-    console.log('  Users included:', data.includes?.users?.length || 0);
-  }
-  
-  // Map author information to tweets
-  if (data.includes?.users) {
-    const userMap = new Map(data.includes.users.map((user) => [user.id, user]));
-    data.data = data.data.map((tweet) => ({
-      ...tweet,
-      author_username: userMap.get(tweet.author_id)?.username,
-      author_name: userMap.get(tweet.author_id)?.name,
-      url: `https://x.com/${userMap.get(tweet.author_id)?.username}/status/${tweet.id}`,
-    }));
-  }
-  
-  // Map media attachments to tweets
-  if (data.includes?.media) {
-    const mediaMap = new Map(data.includes.media.map((m) => [m.media_key, m]));
-    data.data = data.data.map((tweet) => {
-      const media = tweet.attachments?.media_keys?.map((key) => mediaMap.get(key)).filter(Boolean) || [];
-      return {
-        ...tweet,
-        media,
-      };
-    });
-  }
-  
-  return data;
+  return cookies;
 }
 
 async function main() {
+  let browser;
   try {
     console.log('🚀 Fetching X bookmarks...');
     console.log(`📝 Username: ${X_USERNAME}`);
     console.log(`📊 Max bookmarks: ${MAX_BOOKMARKS}`);
-    
-    const userId = await getUserIdFromUsername(X_USERNAME);
-    console.log(`✅ Found user ID: ${userId}`);
-    
-    const bookmarksData = await fetchXBookmarks(userId, MAX_BOOKMARKS);
-    
-    if (!bookmarksData.data || bookmarksData.data.length === 0) {
+
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      viewport: { width: 1280, height: 900 },
+    });
+
+    // Restore session
+    console.log('🍪 Restoring browser session...');
+    await context.addCookies(parseCookies(X_COOKIES));
+
+    const page = await context.newPage();
+
+    if (DEBUG) page.on('console', (msg) => console.log('  [browser]', msg.text()));
+
+    console.log('🌐 Navigating to bookmarks...');
+    await page.goto('https://x.com/i/bookmarks', { waitUntil: 'load', timeout: 30000 });
+
+    // Check we're actually logged in (not redirected to login page)
+    const url = page.url();
+    if (url.includes('/login') || url.includes('/i/flow/login')) {
+      throw new Error('Redirected to login page — cookies are expired. Re-copy from DevTools.');
+    }
+
+    // Wait for tweets to appear
+    await page.waitForSelector('article[data-testid="tweet"]', { timeout: 15000 });
+    console.log('✅ Bookmarks page loaded');
+
+    const bookmarks = [];
+    const seenIds = new Set();
+
+    // Scroll and collect until we have enough
+    let noNewCount = 0;
+    while (bookmarks.length < MAX_BOOKMARKS && noNewCount < 3) {
+      const tweets = await page.$$eval('article[data-testid="tweet"]', (articles) => {
+        return articles.map((article) => {
+          // Tweet URL and ID
+          const statusLink = article.querySelector('a[href*="/status/"]');
+          const href = statusLink?.getAttribute('href') ?? '';
+          const idMatch = href.match(/\/status\/(\d+)/);
+          const id = idMatch?.[1] ?? null;
+
+          // Author username from the status link (/@username/status/...)
+          const usernameMatch = href.match(/^\/([^/]+)\/status\//);
+          const username = usernameMatch?.[1] ?? null;
+
+          // Tweet text
+          const textEl = article.querySelector('[data-testid="tweetText"]');
+          const text = textEl?.innerText ?? '';
+
+          // Timestamp
+          const timeEl = article.querySelector('time');
+          const datetime = timeEl?.getAttribute('datetime') ?? null;
+
+          return { id, username, text, datetime };
+        }).filter((t) => t.id !== null);
+      });
+
+      let added = 0;
+      for (const tweet of tweets) {
+        if (!seenIds.has(tweet.id)) {
+          seenIds.add(tweet.id);
+          bookmarks.push(tweet);
+          added++;
+          if (DEBUG) console.log(`  Got: ${tweet.id} — ${tweet.text.substring(0, 60)}`);
+        }
+      }
+
+      if (added === 0) {
+        noNewCount++;
+      } else {
+        noNewCount = 0;
+      }
+
+      if (bookmarks.length >= MAX_BOOKMARKS) break;
+
+      // Scroll down to load more
+      await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2));
+      await page.waitForTimeout(1500);
+    }
+
+    await browser.close();
+    browser = null;
+
+    const collected = bookmarks.slice(0, MAX_BOOKMARKS);
+    console.log(`✅ Fetched ${collected.length} bookmarks`);
+
+    if (collected.length === 0) {
       console.log('ℹ️  No bookmarks found');
       return;
     }
-    
-    console.log(`✅ Fetched ${bookmarksData.data.length} bookmarks`);
-    
+
+    // Load existing news to skip duplicates
     const existingPosts = new Set();
     const newsDataPath = join(__dirname, '..', 'src', 'data', 'news.ts');
-    
+
     if (existsSync(newsDataPath)) {
       const newsContent = readFileSync(newsDataPath, 'utf-8');
-      // match tweet IDs from existing news content to avoid duplicates
-      const idMatches = newsContent.matchAll(/\/status\/(\d+)/g);
-      for (const match of idMatches) {
+      for (const match of newsContent.matchAll(/\/status\/(\d+)/g)) {
         existingPosts.add(match[1]);
       }
     }
-    
+
     const newNews = [];
     console.log('\n📝 Processing bookmarks for News...');
-    
-    for (const bookmark of bookmarksData.data) {
+
+    for (const bookmark of collected) {
       if (existingPosts.has(bookmark.id)) {
-        console.log(`⏭️  Skipping existing bookmark: ${bookmark.id}`);
+        console.log(`⏭️  Skipping existing: ${bookmark.id}`);
         continue;
       }
-      
-      const date = new Date(bookmark.created_at);
+
+      const date = bookmark.datetime ? new Date(bookmark.datetime) : new Date();
       const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      
-      const author = bookmark.author_username || bookmark.author_name || 'X';
-      const tweetUrl = bookmark.url || `https://x.com/${author}/status/${bookmark.id}`;
-      
-      let text = bookmark.text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
-      // Remove trailing t.co link (usually the link to the tweet itself or attached media)
+
+      const tweetUrl = `https://x.com/${bookmark.username}/status/${bookmark.id}`;
+      let text = bookmark.text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
       text = text.replace(/https:\/\/t\.co\/\w+\s*$/, '').trim();
-      
+
       const content = `<a href='${tweetUrl}' target='_blank' rel='noreferrer'>${text}</a>`;
-      
-      newNews.push({
-        date: monthYear,
-        content: content
-      });
+      newNews.push({ date: monthYear, content });
       console.log(`✅ Processed: ${tweetUrl}`);
     }
-    
+
     if (newNews.length === 0) {
-      console.log('ℹ️  No new bookmarks to add to news');
+      console.log('ℹ️  No new bookmarks to add');
       return;
     }
-    
+
     console.log(`\n📝 Updating news.ts with ${newNews.length} new items...`);
-    
+
     let newsContent = existsSync(newsDataPath)
       ? readFileSync(newsDataPath, 'utf-8')
       : `export const news = [];\n\nexport default news;\n`;
-    
-    const newNewsObjects = newNews.map(item => {
-      const safeContent = item.content.replace(/"/g, '\\"');
-      return `  {
-    date: "${item.date}",
-    content: "${safeContent}",
-  }`;
-    }).join(',\n');
-    
+
+    const newNewsObjects = newNews
+      .map((item) => {
+        const safeContent = item.content.replace(/"/g, '\\"');
+        return `  {\n    date: "${item.date}",\n    content: "${safeContent}",\n  }`;
+      })
+      .join(',\n');
+
     const arrayMatch = newsContent.match(/export const news = \[([\s\S]*?)\];/);
     if (arrayMatch) {
       const existingNewsStr = arrayMatch[1].trim();
       const cleanExisting = existingNewsStr.replace(/,$/, '');
       const updatedNews = newNewsObjects + (cleanExisting ? `,\n${cleanExisting}` : '');
-      
       const newContent = newsContent.replace(
         /export const news = \[([\s\S]*?)\];/,
         `export const news = [\n${updatedNews}\n];`
       );
-      
       writeFileSync(newsDataPath, newContent, 'utf-8');
       console.log('✅ Updated news.ts');
     }
-    
+
     console.log(`\n🎉 Successfully added ${newNews.length} new X bookmarks to News!`);
   } catch (error) {
+    if (browser) await browser.close();
     console.error('\n❌ ERROR OCCURRED');
     console.error('═══════════════════════════════════════');
     console.error('Error Message:', error.message);
-    console.error('Error Stack:', error.stack);
+    if (DEBUG) console.error('Error Stack:', error.stack);
     console.error('═══════════════════════════════════════');
     process.exit(1);
   }
