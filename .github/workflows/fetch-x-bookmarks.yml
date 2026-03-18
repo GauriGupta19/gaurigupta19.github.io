@@ -33,7 +33,7 @@ jobs:
       - name: Fetch X bookmarks
         env:
           X_COOKIES: ${{ secrets.X_COOKIES }}
-          X_USERNAME: ${{ secrets.X_USERNAME || 'Abhiram2k03' }}
+          X_USERNAME: ${{ secrets.X_USERNAME || 'gauri__gupta' }}
           MAX_BOOKMARKS: ${{ secrets.MAX_BOOKMARKS || '10' }}
         run: npm run fetch-bookmarks
 
