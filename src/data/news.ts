@@ -1,5 +1,13 @@
 export const news = [
   {
+    date: "March 2026",
+    content: "<a href='https://x.com/beginbot/status/2031456181256921557' target='_blank' rel='noreferrer'>Mark Zuckerberg acquiring AI companies</a>",
+  },
+  {
+    date: "March 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2029062092398252433' target='_blank' rel='noreferrer'>It was an honor to speak at the French Consulate in San Francisco last week. From being an international student in France during the pre-AI era to today, it’s incredible to see how technology now bridges countries, cultures, and access to knowledge. Building equitable AI</a>",
+  },
+{
     date: "February 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2023878690950836596' target='_blank' rel='noreferrer'>Super excited and honoured to be a part of Delta Fellows along with such incredibly talented folks! See y’all soon :)</a>",
   },
