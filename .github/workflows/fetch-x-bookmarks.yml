@@ -12,6 +12,7 @@ permissions:
 jobs:
   fetch-bookmarks:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
 
     steps:
       - name: Checkout repository
@@ -52,5 +53,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add src/data/news.ts src/data/posts.ts src/pages/posts/
-          git commit -m "chore: add X bookmarks to news [skip ci]"
+          git commit -m "chore: add X bookmarks to news"
           git push
