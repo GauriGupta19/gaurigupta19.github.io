@@ -1,5 +1,13 @@
 export const news = [
   {
+    date: "April 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2040251170099524025' target='_blank' rel='noreferrer'></a>",
+  },
+  {
+    date: "March 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2039008416245686642' target='_blank' rel='noreferrer'>We @neosigmaai @RitvikKapila are building the future of self-improving AI systems! By closing the feedback loop between production data and system improvements, we help teams capture failures, convert them into structured evaluation signals, and use them to drive continuous</a>",
+  },
+{
     date: "March 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2029062092398252433' target='_blank' rel='noreferrer'>It was an honor to speak at the French Consulate in San Francisco last week. From being an international student in France during the pre-AI era to today, it’s incredible to see how technology now bridges countries, cultures, and access to knowledge. Building equitable AI</a>",
   },
