@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "April 2026",
+    content: "<a href='https://x.com/RitvikKapila/status/2044153644006944862' target='_blank' rel='noreferrer'>@NeoSigmaAI ’s auto-harness now supports Terminal-Bench 2.0 and Harbor. Drop in an agent + benchmark. Let it cook overnight: reads failures, optimizes agent harness, auto evals, repeats. GitHub: http:// github.com/neosigmaai/aut o-harness … Huge shoutout to @Aman2048 for the OS contribution.</a>",
+  },
+{
+    date: "April 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2040251170099524025' target='_blank' rel='noreferrer'></a>",
   },
   {
