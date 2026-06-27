@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "June 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2070681459338432560' target='_blank' rel='noreferrer'></a>",
+  },
+{
+    date: "June 2026",
     content: "<a href='https://x.com/tanayj/status/2064092147842740567' target='_blank' rel='noreferrer'></a>",
   },
 {
