@@ -1,5 +1,17 @@
 export const news = [
   {
+    date: "July 2026",
+    content: "<a href='https://x.com/daytonaio/status/2078164618833215699' target='_blank' rel='noreferrer'>\"An agent is only as capable as the environment it can safely act in.\" @neosigma_ai published a great deep dive on building agent workspaces on Daytona. Check it out</a>",
+  },
+  {
+    date: "July 2026",
+    content: "<a href='https://x.com/ritvikkapila/status/2078161409297568132' target='_blank' rel='noreferrer'>How we built production execution environments for agents, pushing the pareto frontier between control, execution, security and data planes!!</a>",
+  },
+  {
+    date: "July 2026",
+    content: "<a href='https://x.com/neosigma_ai/status/2078159114254057612' target='_blank' rel='noreferrer'></a>",
+  },
+{
     date: "June 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2070681459338432560' target='_blank' rel='noreferrer'></a>",
   },
