@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "July 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2078259345150906843' target='_blank' rel='noreferrer'>A great read on how we built our execution runtime layer for agents to learn from experience</a>",
+  },
+{
+    date: "July 2026",
     content: "<a href='https://x.com/daytonaio/status/2078164618833215699' target='_blank' rel='noreferrer'>\"An agent is only as capable as the environment it can safely act in.\" @neosigma_ai published a great deep dive on building agent workspaces on Daytona. Check it out</a>",
   },
   {
