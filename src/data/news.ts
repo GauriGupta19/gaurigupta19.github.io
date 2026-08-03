@@ -1,5 +1,13 @@
 export const news = [
   {
+    date: "August 2026",
+    content: "<a href='https://x.com/Marell_Evans/status/2083936734534939130' target='_blank' rel='noreferrer'>Great post brother! @gauri__gupta is the best human to explain the potential economical impact for the harness layer. ( @neosigma_ai )</a>",
+  },
+  {
+    date: "August 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2083734827073946033' target='_blank' rel='noreferrer'>I shared this with our team last week and we've been 100x more productive ever since we made some changes on how we work with coding agents. Its time to redefine the human-agent coworking model to unlock most productivity.</a>",
+  },
+{
     date: "July 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2078259345150906843' target='_blank' rel='noreferrer'>A great read on how we built our execution runtime layer for agents to learn from experience</a>",
   },
