@@ -1,5 +1,9 @@
 export const news = [
   {
+    date: "January 2024",
+    content: "<a href='https://x.com/eladgil/status/1745851731593101641' target='_blank' rel='noreferrer'>Things to do when asking for an intro: -Start a fresh clean email with a relevant subject line someone can forward easily. Dont reply with a bunch of crap inline alongside other musings, questions etc -Explain who you are and why you are interesting/special. Drop some brand</a>",
+  },
+{
     date: "August 2026",
     content: "<a href='https://x.com/Marell_Evans/status/2083936734534939130' target='_blank' rel='noreferrer'>Great post brother! @gauri__gupta is the best human to explain the potential economical impact for the harness layer. ( @neosigma_ai )</a>",
   },
