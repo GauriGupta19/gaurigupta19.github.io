@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "August 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2091245256193056808' target='_blank' rel='noreferrer'>We're hiring a Founding Business Generalist to work closely with us across product, business, gtm, strategy, and partnerships at @neosigma_ai . We're looking for someone who understands technology deeply but is most energized operating at the intersection of business, product,</a>",
+  },
+{
+    date: "August 2026",
     content: "<a href='https://x.com/ritvikkapila/status/2087964978263584957' target='_blank' rel='noreferrer'>When a new, capable model is ported to a stale harness, we notice a loss in performance even with a smarter model. This is what we call \"The Scaffolding Tax\". Check out our most recent blog: https:// x.com/neosigma_ai/st atus/2087962887482700209?s=20 … Great work by @SChen1249 from our team!</a>",
   },
   {
