@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "August 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2092036442990268782' target='_blank' rel='noreferrer'>if you are a former founder, or some with venture experience, or high-agency early-stage operator. would love to hear from you!</a>",
+  },
+{
+    date: "August 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2091245256193056808' target='_blank' rel='noreferrer'>We're hiring a Founding Business Generalist to work closely with us across product, business, gtm, strategy, and partnerships at @neosigma_ai . We're looking for someone who understands technology deeply but is most energized operating at the intersection of business, product,</a>",
   },
 {
