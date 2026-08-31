@@ -1,6 +1,10 @@
 export const news = [
   {
     date: "August 2026",
+    content: "<a href='https://x.com/ritvikkapila/status/2094498720457117995' target='_blank' rel='noreferrer'>working on chatgpt work without chatgpt work working</a>",
+  },
+{
+    date: "August 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2092672670341206517' target='_blank' rel='noreferrer'>We @neosigma_ai are hiring all across the stack and building a super cracked founding team - across engineers, researchers, product and more! Most actively looking for someone to work with me across product, gtm, business, strategy and more! If you are a former founder, or</a>",
   },
 {
