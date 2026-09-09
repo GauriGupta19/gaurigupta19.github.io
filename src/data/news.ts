@@ -1,5 +1,9 @@
 export const news = [
   {
+    date: "September 2026",
+    content: "<a href='https://x.com/ritvikkapila/status/2097416994282946773' target='_blank' rel='noreferrer'>Is it just me, or is Astra noticeably better at being concise? Very high signal-to-noise. Almost no unnecessary output bloat.</a>",
+  },
+{
     date: "August 2026",
     content: "<a href='https://x.com/ritvikkapila/status/2094498720457117995' target='_blank' rel='noreferrer'>working on chatgpt work without chatgpt work working</a>",
   },
