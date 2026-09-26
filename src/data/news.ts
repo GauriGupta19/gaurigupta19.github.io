@@ -1,6 +1,18 @@
 export const news = [
   {
     date: "September 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2103907855057469753' target='_blank' rel='noreferrer'>Every agent trace is an opportunity to make the next interaction better. But when verification is expensive, teams inspect a small sample and miss the failures hiding in the long tail. At @neosigma_ai , we turn those failures into evals and feedback for improving agents. Our</a>",
+  },
+  {
+    date: "September 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2103673570383839537' target='_blank' rel='noreferrer'>This! Evals are one of the gate (and the only trusted gate) for diffusion of AI in the enterprise. If you want to own your frontier labs grade evals from your prod traffic, come talk to us @neosigma_ai</a>",
+  },
+  {
+    date: "September 2026",
+    content: "<a href='https://x.com/gauri__gupta/status/2103907582977147113' target='_blank' rel='noreferrer'></a>",
+  },
+{
+    date: "September 2026",
     content: "<a href='https://x.com/ritvikkapila/status/2097416994282946773' target='_blank' rel='noreferrer'>Is it just me, or is Astra noticeably better at being concise? Very high signal-to-noise. Almost no unnecessary output bloat.</a>",
   },
 {
