@@ -1,6 +1,18 @@
 export const news = [
   {
     date: "September 2026",
+    content: "<a href='https://x.com/ritvikkapila/status/2105048272771711462' target='_blank' rel='noreferrer'>go @ListenLabs team!</a>",
+  },
+  {
+    date: "September 2026",
+    content: "<a href='https://x.com/neosigma_ai/status/2105057034953785809' target='_blank' rel='noreferrer'>Congrats to the @ListenLabs team! We’ve really enjoyed working with you and are excited for what’s ahead.</a>",
+  },
+  {
+    date: "September 2026",
+    content: "<a href='https://x.com/neosigma_ai/status/2105063251482738906' target='_blank' rel='noreferrer'>Congrats to the @ListenLabs team! We’ve really enjoyed working with you and are excited for what’s ahead.</a>",
+  },
+{
+    date: "September 2026",
     content: "<a href='https://x.com/gauri__gupta/status/2103907855057469753' target='_blank' rel='noreferrer'>Every agent trace is an opportunity to make the next interaction better. But when verification is expensive, teams inspect a small sample and miss the failures hiding in the long tail. At @neosigma_ai , we turn those failures into evals and feedback for improving agents. Our</a>",
   },
   {
