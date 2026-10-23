@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Mail, Twitter, Linkedin } from "./Icons";
 
 interface SidebarProps {
@@ -42,6 +44,32 @@ const socialButtons = [
 ];
 
 export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarProps) {
+  const [activeSection, setActiveSection] = useState("about");
+
+  useEffect(() => {
+    let frame = 0;
+    const updateSection = () => {
+      const sections = ["about", "investing", "news"]
+        .map(id => document.getElementById(id))
+        .filter((section): section is HTMLElement => section !== null);
+      const threshold = Math.min(window.innerHeight * 0.35, 220);
+      const current = sections.filter(section => section.getBoundingClientRect().top <= threshold).at(-1);
+      setActiveSection(current?.id ?? "about");
+    };
+    const handleScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateSection);
+    };
+    updateSection();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
   // Mobile full-screen menu overlay (when hamburger is clicked)
   if (isMobileMenuOpen) {
     return (
@@ -50,7 +78,7 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
           <img
             src="/assets/images/profile.webp"
             alt="Gauri Gupta"
-            className="w-full h-full object-cover"
+            className="profile-portrait w-full h-full object-cover"
             loading="lazy"
           />
         </div>
@@ -81,13 +109,13 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
 
   // Regular sidebar (both mobile and desktop)
   return (
-    <aside className="flex flex-col gap-5 md:gap-6 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:h-[calc(100vh-5rem)] md:overflow-hidden">
+    <aside className="flex flex-col gap-5 md:gap-6 w-full md:w-72 shrink-0 items-center md:items-start md:sticky md:top-20 md:pb-6">
       {/* Profile Image */}
-      <div className="h-72 w-72 md:h-64 md:w-64 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
+      <div className="h-72 w-72 md:h-64 md:w-64 shrink-0 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
         <img
           src="/assets/images/profile.webp"
           alt="Gauri Gupta"
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className="profile-portrait w-full h-full object-cover"
           loading="lazy"
         />
       </div>
@@ -100,8 +128,9 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
         </p>
       </div>
 
+
       {/* Icon-only social buttons */}
-      <div className="flex gap-2">
+      <div className="sidebar-socials flex gap-2">
         {socialButtons.map(({ icon: Icon, href, label }) => (
           <a
             key={label}
@@ -115,6 +144,15 @@ export default function Sidebar({ isMobileMenuOpen = false, onClose }: SidebarPr
           </a>
         ))}
       </div>
+      <nav aria-label="Table of contents" className="sidebar-contents w-full border-t border-border pt-4">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2 text-center md:text-left">Contents</p>
+        <ul className="flex flex-wrap justify-center md:flex-col md:items-start gap-x-5 gap-y-1 text-sm">
+          <li><a href="#about" aria-current={activeSection === "about" ? "location" : undefined} className="inline-block py-1.5 text-muted-foreground hover:text-foreground transition-colors">About</a></li>
+          <li><a href="#investing" aria-current={activeSection === "investing" ? "location" : undefined} className="inline-block py-1.5 text-muted-foreground hover:text-foreground transition-colors">Investing</a></li>
+          <li><a href="#news" aria-current={activeSection === "news" ? "location" : undefined} className="inline-block py-1.5 text-muted-foreground hover:text-foreground transition-colors">News</a></li>
+          <li><Link to="/blogs" className="inline-block py-1.5 text-muted-foreground hover:text-foreground transition-colors">Writing <span aria-hidden="true">↗</span></Link></li>
+        </ul>
+      </nav>
     </aside>
   );
 }

@@ -39,21 +39,21 @@ export default function Header() {
             <div className="flex gap-6 lg:gap-8">
               <Link
                 to="/"
-                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
+                className="top-nav-link text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
               >
                 Home
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
               </Link>
               <Link
                 to="/blogs"
-                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
+                className="top-nav-link text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
               >
                 Blogs
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
               </Link>
               <Link
                 to="/news"
-                className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
+                className="top-nav-link text-sm font-medium text-foreground/70 hover:text-foreground transition-colors relative group"
               >
                 News
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
@@ -88,14 +88,14 @@ export default function Header() {
               <Link
                 to="/blogs"
                 onClick={handleLinkClick}
-                className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
+                className="top-nav-link block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
               >
                 Blogs
               </Link>
               <Link
                 to="/news"
                 onClick={handleLinkClick}
-                className="block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
+                className="top-nav-link block px-4 py-3 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors touch-manipulation"
               >
                 News
               </Link>

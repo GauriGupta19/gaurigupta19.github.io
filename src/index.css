@@ -266,3 +266,67 @@
     @apply my-8 sm:my-10 border-border;
   }
 }
+
+/* A scrollable career history, with the current chapter at the top. */
+.career-timeline-scroll { max-height: 650px; overflow-y: auto; overscroll-behavior-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; padding: 4px 20px 4px 4px; }
+.career-timeline-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 5px; border-radius: 3px; }
+.career-timeline { list-style: none; margin: 0; padding: 0 0 0 10px; }
+.career-milestone { position: relative; border-left: 1px solid var(--border); padding: 0 0 34px 26px; }
+.career-milestone::before { content: ""; position: absolute; left: -4px; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--background); border: 1px solid var(--muted-foreground); }
+.career-milestone-current::before { background: var(--foreground); border-color: var(--foreground); }
+.career-milestone:last-child { padding-bottom: 8px; border-color: transparent; }
+.career-stage { display: block; font: 10px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted-foreground); margin-bottom: 6px; }
+.career-milestone h3 { font-size: 17px; font-weight: 500; letter-spacing: -.3px; line-height: 1.5; }
+.career-milestone h3 { margin-bottom: 12px; }
+.career-milestone p { font-size: 15px; line-height: 1.85; color: var(--foreground); }
+.career-milestone p + p { margin-top: 16px; }
+@media (max-width: 640px) { .career-timeline-scroll { max-height: 580px; padding-right: 10px; }.career-milestone { padding-left: 20px; } }
+
+.home-page #about, .home-page #investing, .home-page #news { scroll-margin-top: 100px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Warm orange headings paired with green timeline and navigation accents. */
+.home-page { --home-accent: #b64f27; --home-tint: #fff2e9; --home-green: #317153; --home-green-tint: #edf5ee; }
+.dark .home-page { --home-accent: #f6a176; --home-tint: #302119; --home-green: #8ac99e; --home-green-tint: #19281e; }
+.home-page main > div > section > h2,
+.home-page #news h2 { color: var(--home-accent); }
+.home-page .career-milestone h3 { transition: color 180ms ease; }
+.home-page .career-milestone-current h3,
+.home-page .career-stage { color: var(--home-green); }
+.home-page .career-milestone::before { transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
+.home-page .career-milestone-current::before { background: var(--home-green); border-color: var(--home-green); box-shadow: 0 0 0 4px var(--home-green-tint); }
+.home-page .career-timeline-scroll { scrollbar-color: var(--home-green) transparent; }
+.home-page .content-link { transition: color 180ms ease, text-decoration-color 180ms ease; }
+.home-page .content-link:hover { color: var(--home-green); text-decoration-color: var(--home-green); }
+.sidebar-contents a { position: relative; padding-left: 12px; padding-right: 12px; border-radius: 4px; transition: color 180ms ease, background-color 180ms ease; }
+.sidebar-contents a[aria-current="location"] { color: var(--home-green); background: var(--home-green-tint); }
+.sidebar-contents a[aria-current="location"]::before { content: ""; position: absolute; left: 0; top: 25%; height: 50%; width: 2px; background: var(--home-green); border-radius: 2px; }
+.home-page a:focus-visible { outline: 2px solid var(--home-accent); outline-offset: 4px; }
+@media (hover: hover) {
+  .home-page .career-milestone:hover h3 { color: var(--home-green); }
+  .home-page .career-milestone:hover::before { border-color: var(--home-green); background: var(--home-green); box-shadow: 0 0 0 4px var(--home-green-tint); }
+  .sidebar-contents a:hover { color: var(--home-accent); background: var(--home-tint); }
+  .home-page .sidebar-socials a:hover { background: var(--home-green); color: var(--background); transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-page *, .home-page *::before { transition: none !important; animation: none !important; }
+  .home-page .sidebar-socials a:hover { transform: none; }
+  .home-page .animate-slide-up { opacity: 1; }
+}
+
+.home-page #investing h3 { color: var(--home-green); }
+.home-page #investing li::marker { color: var(--home-accent); }
+.home-page .career-milestone::before { border-color: var(--home-green); }
+.home-page #investing .content-link { text-decoration-color: var(--home-accent); }
+.home-page #news .news-content a:hover { color: var(--home-green); text-decoration-color: var(--home-green); }
+
+/* Frame the portrait around the face and hair, preserving the source photo. */
+.profile-portrait { object-position: 50% 20%; transform: scale(1.5); transform-origin: 50% 20%; }
+
+
+.top-nav-link { --nav-orange: #b64f27; --nav-green: #317153; }
+.dark .top-nav-link { --nav-orange: #f6a176; --nav-green: #8ac99e; }
+.top-nav-link > span { background-color: var(--nav-orange); }
+.top-nav-link:hover, .top-nav-link:focus-visible { color: var(--nav-green); }
+.top-nav-link:focus-visible { outline: 2px solid var(--nav-orange); outline-offset: 5px; }
+@media (prefers-reduced-motion: reduce) { .top-nav-link, .top-nav-link > span { transition: none; } }
